@@ -70,6 +70,12 @@ def handle(action: dict) -> dict:
 
 That is the whole contract: **gate → sign → chain → verify.** Every flagship follows it.
 
+> **Don't want to build an organ — just wrap your existing app?** Use the
+> **[Agentic Mesh SDK](./SDK_DROP_IN.md)** instead. `npm i @szl/agentic-mesh` /
+> `pip install szl-agentic-mesh` / `go get github.com/szl-holdings/sdk-go` drops the same
+> **gate → sign → chain → verify** contract onto any Next.js / FastAPI / Express / Go / CLI app in
+> three lines, with optional fully-offline (airgap) operation.
+
 ## Deploy airgapped
 
 Package your organ as a **UDS Zarf bundle** (see [szl-holdings/uds-bundles](https://github.com/szl-holdings/uds-bundles))
