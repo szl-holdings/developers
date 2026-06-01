@@ -32,6 +32,7 @@ All five return Doctrine v11 verbatim from `/healthz`: `749 declarations / 14 un
 | [QUICKSTART.md](./QUICKSTART.md) | 5-minute walkthrough: install client, list tools, dispatch a command, verify a receipt |
 | [API_REFERENCE.md](./API_REFERENCE.md) | Every public endpoint across the five flagships |
 | [MCP_INTEGRATION.md](./MCP_INTEGRATION.md) | Add the Hatun-MCP server to Claude Desktop / Cursor |
+| [GRAPHQL.md](./GRAPHQL.md) | Unified GraphQL surface across the five flagships — example queries, Apollo Client, MCP-vs-GraphQL |
 | [SUBSTRATE_PACKAGES.md](./SUBSTRATE_PACKAGES.md) | Monorepo `platform/packages/` — build your own organ |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | How to contribute |
 | [EXAMPLES/](./EXAMPLES/) | Runnable Python + config examples |
