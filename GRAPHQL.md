@@ -6,9 +6,15 @@ The **SZL GraphQL Gateway** gives you one typed endpoint over all five flagships
 a Khipu receipt chain — so the GraphQL surface is itself an auditable log.
 Doctrine v11 · Apache-2.0.
 
-- Live endpoint: `https://szlholdings-graphql-gateway.hf.space/graphql`
-- Interactive explorer (mobile-friendly): `https://szlholdings-graphql-gateway.hf.space/graphiql`
-- Full SDL: `https://szlholdings-graphql-gateway.hf.space/graphql/sdl`
+> **⚠️ STATUS: ROADMAP — NOT YET DEPLOYED.** The gateway source exists in
+> [`szl-holdings/graphql-gateway`](https://github.com/szl-holdings/graphql-gateway) (Strawberry +
+> FastAPI), but **no public Space is live yet** — the URLs below currently return `404`. Do **not**
+> demo these as live endpoints. Until the Space ships, query the flagships directly via their REST
+> surfaces in [API_REFERENCE.md](./API_REFERENCE.md). This page documents the *planned* unified schema.
+
+- Planned endpoint (not live): `https://szlholdings-graphql-gateway.hf.space/graphql`
+- Planned explorer (not live): `https://szlholdings-graphql-gateway.hf.space/graphiql`
+- Planned SDL (not live): `https://szlholdings-graphql-gateway.hf.space/graphql/sdl`
 
 Built with **Strawberry** (code-first) + **FastAPI**, **Apollo Federation v2**
 ready — each flagship can publish its own subgraph and the gateway composes them.
@@ -98,9 +104,10 @@ const { data } = await client.query({
 console.log(data.mesh.flagships);
 ```
 
-`curl` works too:
+`curl` will work too once the gateway is deployed (it returns `404` today — roadmap):
 
 ```bash
+# ROADMAP — endpoint not live yet (404). Shown for the planned schema.
 curl -s https://szlholdings-graphql-gateway.hf.space/graphql \
   -H 'content-type: application/json' \
   -d '{"query":"{ mesh { totalReceipts chainIntegrity } }"}'
@@ -112,14 +119,15 @@ curl -s https://szlholdings-graphql-gateway.hf.space/graphql \
 |---|---|---|
 | Best for | LLM agents / tool-calling clients (Claude, Cursor) | apps, dashboards, scripts, typed clients |
 | Protocol | MCP Streamable HTTP + SSE (`2025-03-26`) | GraphQL over HTTP |
-| Shape | 16 governed tools, tool-call semantics | typed schema, query exactly the fields you need |
-| Discovery | `tools/list` | introspection / `/graphql/sdl` / `/graphiql` |
+| Shape | governed tools, tool-call semantics | typed schema, query exactly the fields you need |
+| Discovery | `/api/a11oy/v1/mcp/tools` | introspection / `/graphql/sdl` / `/graphiql` |
 | Governance | Yuyay-13 gate + Khipu receipts (DSSE-signed) | Khipu receipt signed on every query/mutation |
 | Federation | n/a | Apollo Federation v2 (per-flagship subgraphs) |
-| Endpoint | `…/mcp/` (trailing slash!) | `…/graphql` |
+| Endpoint | `/api/a11oy/v1/mcp/*` (live REST) | `…/graphql` (roadmap) |
+| Live today? | ✅ REST surface live (`/api/a11oy/v1/mcp/tools`) | ❌ not yet deployed (404) |
 
-Rule of thumb: **agents → MCP, software → GraphQL.** Both write to the same Khipu
-audit chain, so whichever you pick, every action stays verifiable.
+Rule of thumb: **agents → MCP, software → GraphQL.** Today only the MCP REST surface is live;
+the GraphQL gateway is roadmap. Both are designed to write to the same Khipu audit chain.
 
 See also: [MCP_INTEGRATION.md](./MCP_INTEGRATION.md), [API_REFERENCE.md](./API_REFERENCE.md).
 

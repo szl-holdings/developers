@@ -1,14 +1,23 @@
 # MCP Integration — Claude Desktop & Cursor
 
-The **Hatun-MCP** server exposes **16 SZL tools** under PURIQ governance (Yuyay-13 gate, Khipu
-receipts, DSSE-signed) over **Streamable HTTP + SSE**. Protocol version `2025-03-26`,
-server `hatun-mcp`. Doctrine v11 · Apache-2.0.
+The SZL MCP tools run under PURIQ governance (Yuyay-13 gate, Khipu receipts, DSSE-signed).
+Doctrine v11 · Apache-2.0.
 
-Live endpoint: `https://szlholdings-a11oy.hf.space/mcp/`
-
-> **Two gotchas** (root-caused during Warhacker prep):
-> 1. The URL **must end with a trailing slash**: `/mcp/` (not `/mcp`).
-> 2. The `Accept` header must include **both** `application/json` and `text/event-stream`.
+> **⚠️ LIVE STATUS (honest).** The **Streamable-HTTP JSON-RPC transport at `/mcp/` is roadmap —
+> NOT yet live.** On the deployed a11oy Space, `POST /mcp/` (`initialize` / `tools/list`) returns
+> **HTTP 405 Method Not Allowed**, and `GET /mcp/` serves an HTML landing page. The `mcp-remote`
+> bridge configs below therefore will **not** connect yet — they are provided for when the JSON-RPC
+> transport ships.
+>
+> **What works today** is the REST MCP surface on a11oy:
+> ```bash
+> curl -s https://szlholdings-a11oy.hf.space/api/a11oy/v1/mcp/tools   # JSON tool catalog (4 tools)
+> curl -s -X POST https://szlholdings-a11oy.hf.space/api/a11oy/v1/mcp/call \
+>   -H 'content-type: application/json' \
+>   -d '{"tool":"lambda_score","args":{}}'
+> ```
+> The catalog currently exposes **4 governed tools** (e.g. `a11oy_gate`, `lambda_score`). The
+> "16-tool Hatun-MCP" is the planned JSON-RPC surface — do not demo a 16-tool MCP as live.
 
 ---
 
@@ -57,27 +66,43 @@ point Cursor's `~/.cursor/mcp.json` at:
 }
 ```
 
-## Verify it works from the CLI
+## Verify the LIVE MCP surface from the CLI
+
+The REST surface below is live and verifiable right now:
 
 ```bash
-# 1) initialize
+# list the governed tools (live — JSON catalog)
+curl -s https://szlholdings-a11oy.hf.space/api/a11oy/v1/mcp/tools | python3 -m json.tool
+
+# call a tool (live — returns a governed result + doctrine block)
+curl -s -X POST https://szlholdings-a11oy.hf.space/api/a11oy/v1/mcp/call \
+  -H 'content-type: application/json' \
+  -d '{"tool":"lambda_score","args":{}}' | python3 -m json.tool
+```
+
+Expect a catalog of **4 tools** today (`a11oy_gate`, `lambda_score`, …) — not 16.
+
+### JSON-RPC `/mcp/` transport (roadmap — currently 405)
+
+The following commands describe the *planned* Streamable-HTTP JSON-RPC transport. **They return
+HTTP 405 on the deployed Space today** and are documented for when that transport ships:
+
+```bash
+# (roadmap) initialize
 curl -s https://szlholdings-a11oy.hf.space/mcp/ \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"cli","version":"0.1"}}}'
-
-# 2) list the 16 tools
+# (roadmap) tools/list
 curl -s https://szlholdings-a11oy.hf.space/mcp/ \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
 ```
 
-Expect server `hatun-mcp`, protocol `2025-03-26`, and **exactly 16 tools**.
-
 ## What the tools do
 
-The 16 tools span: DSSE signing & verification, Khipu chain operations, PURIQ master-formula
+The governed tools span: DSSE signing & verification, Khipu chain operations, PURIQ master-formula
 evaluation, Yuyay-13 gate scoring, Unay memory recall, doctrine-number lookup, and policy-gate
 checks. Every tool call is governed (deny-by-default) and emits a signed receipt — so an MCP client
 gets the same provenance guarantees as a direct HTTP caller.
