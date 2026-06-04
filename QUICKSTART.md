@@ -27,27 +27,34 @@ curl -s https://szlholdings-a11oy.hf.space/healthz | python3 -m json.tool
 You should see `"doctrine": "v11"` and `"numbers": {"declarations": 749, "axioms": 14, "sorries": 163}`.
 That is the same number proved in Lean and cited everywhere — honest counters.
 
-## 2. List the Hatun-MCP tools (16 tools)
+## 2. List the Hatun-MCP tools (23 static tools)
 
-The MCP server speaks Streamable HTTP. **The trailing slash on `/mcp/` matters**, and you must send
-both `application/json` and `text/event-stream` in `Accept`:
+The **Hatun-MCP** server ([szl-holdings/hatun-mcp](https://github.com/szl-holdings/hatun-mcp)) is the
+fleet's only spec-compliant MCP transport. It speaks Streamable HTTP at
+`https://szlholdings-hatun-mcp.hf.space/mcp/`. **The trailing slash on `/mcp/` matters**, you must
+send both `application/json` and `text/event-stream` in `Accept`, and an SZL API key is required:
 
 ```bash
 # initialize
-curl -s https://szlholdings-a11oy.hf.space/mcp/ \
+curl -s https://szlholdings-hatun-mcp.hf.space/mcp/ \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"quickstart","version":"0.1"}}}'
+  -H 'Authorization: Bearer szl_YOUR_KEY' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"quickstart","version":"0.1"}}}'
 
 # list tools
-curl -s https://szlholdings-a11oy.hf.space/mcp/ \
+curl -s https://szlholdings-hatun-mcp.hf.space/mcp/ \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
+  -H 'Authorization: Bearer szl_YOUR_KEY' \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
 ```
 
-You'll get **exactly 16 tools** (server `hatun-mcp`, protocol `2025-03-26`).
-See [MCP_INTEGRATION.md](./MCP_INTEGRATION.md) to wire these into Claude Desktop or Cursor.
+You'll get **23 static tools** (server `hatun-mcp`, protocol `2025-06-18`); more when the server's
+dynamic organ-catalog registration reaches a live organ. The other SZL Spaces expose their tools as
+HTTP catalogs at `/api/<organ>/v1/mcp/tools` (e.g. `…amaru.hf.space/api/amaru/v1/mcp/tools`), not as
+an MCP transport. See [MCP_INTEGRATION.md](./MCP_INTEGRATION.md) to wire Hatun-MCP into Claude
+Desktop or Cursor — and to run it locally while the hosted Space finishes (re)building.
 
 ## 3. Dispatch a governed command (sign a payload)
 

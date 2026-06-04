@@ -58,13 +58,17 @@ Base: `https://szlholdings-a11oy.hf.space`
 | GET/POST | `/wires/D` | Wire D traceparent surface. |
 | GET | `/api/a11oy/v1/puriq/formulas` | PURIQ formula catalog (master formula + axes). |
 | POST | `/api/a11oy/v2/unay/recall` | Unay memory recall (semantic lookup over governed memory). |
-| ALL | `/mcp/` | **Hatun-MCP server (16 tools)** — Streamable HTTP. Trailing slash required; `Accept: application/json, text/event-stream`. Protocol `2025-03-26`. |
+| GET | `/api/a11oy/v1/mcp/tools` | a11oy's HTTP **tool catalog** (4 tools: `a11oy_gate`, `lambda_score`, `khipu_sign`, `khipu_verify`). This is a JSON catalog, **not** an MCP transport — `…a11oy.hf.space/mcp/` serves the web UI and returns HTTP 405 to JSON-RPC. |
 | GET | `/viz/khipu` · `/viz/doctrine` · `/viz/router` | Live Three.js visualizations. |
 
-### Hatun-MCP (16 tools)
-`initialize` then `tools/list` over JSON-RPC 2.0 at `/mcp/`. Tools cover signing, verification,
-formula evaluation, memory recall, doctrine lookup, and gate evaluation. See
-[MCP_INTEGRATION.md](./MCP_INTEGRATION.md) and [`EXAMPLES/mcp_claude_config.json`](./EXAMPLES/mcp_claude_config.json).
+### Model Context Protocol (Hatun-MCP — 23 static tools)
+The spec-compliant Streamable HTTP MCP server is **Hatun-MCP**, hosted separately at
+`https://szlholdings-hatun-mcp.hf.space/mcp/` (repo
+[szl-holdings/hatun-mcp](https://github.com/szl-holdings/hatun-mcp)), **not** on a11oy. `initialize`
+then `tools/list` over JSON-RPC 2.0 at `/mcp/` (trailing slash; `Accept: application/json,
+text/event-stream`; `Authorization: Bearer szl_…`; protocol `2025-06-18`) returns **23 static
+tools** (17 `szl_*` + 6 governance). See [MCP_INTEGRATION.md](./MCP_INTEGRATION.md) and
+[`EXAMPLES/mcp_claude_config.json`](./EXAMPLES/mcp_claude_config.json).
 
 ---
 
@@ -103,7 +107,7 @@ Base: `https://szlholdings-rosie.hf.space`
 | GET | `/api/rosie/v2/commands` | List the 16-command catalog. |
 | POST | `/unay/recall` · `/unay/store` | Unay memory recall / store. |
 | GET/POST | `/khipu/lmdb/*` | Local Khipu LMDB ingest/query (operator-local receipt store). |
-| ALL | `/mcp/` | MCP server surface (shared substrate). |
+| GET | `/api/rosie/v1/mcp/tools` | rosie's HTTP **tool catalog** (12 tools: `lambda_gate`, `doctrine_gate`, `doi_bind`, `bekenstein_bound`, `policy_evaluate`, `receipt_verify`, `ledger_append`, `cite_theorem`, `mesh_inspect`, `memory_write`, `memory_query`, `workflow_start`). JSON catalog, **not** an MCP transport — `/mcp/` 404s. Hatun-MCP aggregates these over real MCP. |
 | GET | `/console/` | Operator console SPA (verdicts + live receipt stream, Wire C). |
 
 > Every `/api/rosie/v2/command` payload is first filtered through **sentra** (`/sentra/rosie/filter`).

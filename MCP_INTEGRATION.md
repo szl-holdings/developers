@@ -1,16 +1,37 @@
 # MCP Integration — Claude Desktop & Cursor
 
-The **Hatun-MCP** server exposes **16 SZL tools** under PURIQ governance (Yuyay-13 gate, Khipu
-receipts, DSSE-signed) over **Streamable HTTP + SSE**. Protocol version `2025-03-26`,
-server `hatun-mcp`. Doctrine v11 · Apache-2.0.
+The **Hatun-MCP** server exposes **23 SZL tools** (17 `szl_*` tools incl. `szl_lambda_quorum`,
+plus 6 governance tools) under PURIQ governance (Yuyay-13 gate, Khipu receipts, DSSE-signed)
+over **Streamable HTTP + SSE**. Protocol version `2025-06-18`, server `hatun-mcp`.
+Doctrine v11 · Apache-2.0.
 
-Live endpoint: `https://szlholdings-a11oy.hf.space/mcp/`
+Canonical endpoint: `https://szlholdings-hatun-mcp.hf.space/mcp/`
+
+> **Status (2026-06-04):** Hatun-MCP is the SZL fleet's only spec-compliant Streamable HTTP
+> MCP transport. The hosted Space is being (re)deployed from
+> [szl-holdings/hatun-mcp](https://github.com/szl-holdings/hatun-mcp); until the Space build
+> finishes, run the server locally (see [Run locally](#run-locally-no-hosted-dependency)).
+> The other SZL Spaces (a11oy, amaru, rosie, sentra) expose their tools as **HTTP catalogs**
+> at `/api/<organ>/v1/mcp/tools`, **not** as an MCP transport — do not point an MCP client at
+> `…a11oy.hf.space/mcp/` (that path serves the web UI and rejects JSON-RPC with HTTP 405).
 
 > **Two gotchas** (root-caused during Warhacker prep):
-> 1. The URL **must end with a trailing slash**: `/mcp/` (not `/mcp`).
+> 1. The URL **must end with a trailing slash**: `/mcp/` (not `/mcp`, which 307-redirects).
 > 2. The `Accept` header must include **both** `application/json` and `text/event-stream`.
+> 3. An SZL API key is required (`Authorization: Bearer szl_…`); anonymous calls are declined
+>    and receipted.
 
 ---
+
+## Run locally (no hosted dependency)
+
+```bash
+git clone https://github.com/szl-holdings/hatun-mcp && cd hatun-mcp
+pip install -r requirements.txt
+python -m hatun_mcp.server          # stdio mode for Claude Desktop / Cursor
+# or hosted HTTP:
+uvicorn hatun_mcp.server_http:app --host 0.0.0.0 --port 7860   # MCP at /mcp/
+```
 
 ## Claude Desktop
 
@@ -28,7 +49,9 @@ Add the SZL server. For remote Streamable-HTTP servers, use the `mcp-remote` bri
       "args": [
         "-y",
         "mcp-remote",
-        "https://szlholdings-a11oy.hf.space/mcp/",
+        "https://szlholdings-hatun-mcp.hf.space/mcp/",
+        "--header",
+        "Authorization: Bearer szl_YOUR_KEY",
         "--header",
         "Accept: application/json, text/event-stream"
       ]
@@ -50,7 +73,8 @@ point Cursor's `~/.cursor/mcp.json` at:
   "mcpServers": {
     "szl-hatun": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://szlholdings-a11oy.hf.space/mcp/",
+      "args": ["-y", "mcp-remote", "https://szlholdings-hatun-mcp.hf.space/mcp/",
+               "--header", "Authorization: Bearer szl_YOUR_KEY",
                "--header", "Accept: application/json, text/event-stream"]
     }
   }
@@ -61,31 +85,39 @@ point Cursor's `~/.cursor/mcp.json` at:
 
 ```bash
 # 1) initialize
-curl -s https://szlholdings-a11oy.hf.space/mcp/ \
+curl -s https://szlholdings-hatun-mcp.hf.space/mcp/ \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"cli","version":"0.1"}}}'
+  -H 'Authorization: Bearer szl_YOUR_KEY' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"cli","version":"0.1"}}}'
 
-# 2) list the 16 tools
-curl -s https://szlholdings-a11oy.hf.space/mcp/ \
+# 2) list the tools
+curl -s https://szlholdings-hatun-mcp.hf.space/mcp/ \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
+  -H 'Authorization: Bearer szl_YOUR_KEY' \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
 ```
 
-Expect server `hatun-mcp`, protocol `2025-03-26`, and **exactly 16 tools**.
+Expect server `hatun-mcp`, protocol `2025-06-18`, and **23 static tools** (more when the
+server's dynamic organ-catalog registration reaches a live organ).
 
 ## What the tools do
 
-The 16 tools span: DSSE signing & verification, Khipu chain operations, PURIQ master-formula
-evaluation, Yuyay-13 gate scoring, Unay memory recall, doctrine-number lookup, and policy-gate
-checks. Every tool call is governed (deny-by-default) and emits a signed receipt — so an MCP client
-gets the same provenance guarantees as a direct HTTP caller.
+The 17 `szl_*` tools span: a11oy LLM routing, killinchu drone detect/cue, sentra immune scan,
+rosie reasoning, Khipu receipt verification, Lean theorem verification, PURIQ master-formula
+evaluation, Yuyay-13 gate scoring, doctrine/thesis lookup, drone DB lookup, formula evaluation,
+and `szl_lambda_quorum` (a Byzantine n≥3f+1 Λ verdict over the organs). The 6 governance tools
+expose the gates directly: `yuyay_gate_check`, `khipu_append_and_verify`, `dsse_sign`,
+`mesh_quorum_status`, `puriq_master_tool`, `governance_pacbayes_bound`. Every tool call is
+governed (deny-by-default) and emits a signed receipt — so an MCP client gets the same
+provenance guarantees as a direct HTTP caller.
 
 ## Security notes
 
-- The public demo endpoint is rate-limited. For production, request an API key via the customer
-  portal and pass it as a bearer header.
+- The hosted endpoint requires an SZL API key (bearer header). Request one via the customer
+  portal. DSSE signatures are **REAL** when the server has a signing key; **honestly labeled
+  `PLACEHOLDER`/`UNSIGNED`** when it does not — never faked.
 - All tool invocations are recorded on the Khipu Merkle DAG (tamper-evident; EU AI Act Art. 12).
 
 *Signed Yachay `<yachay@szlholdings.dev>` · Co-Authored-By: Perplexity Computer Agent · Apache-2.0*

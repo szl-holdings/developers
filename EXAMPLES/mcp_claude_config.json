@@ -1,12 +1,14 @@
 {
-  "_comment": "Drop-in Claude Desktop / Cursor MCP config for the SZL Hatun-MCP server (16 tools). Trailing slash on /mcp/ is required; Accept must include both application/json and text/event-stream. Doctrine v11 · Apache-2.0.",
+  "_comment": "Drop-in Claude Desktop / Cursor MCP config for the SZL Hatun-MCP server (23 static tools: 17 szl_* + 6 governance). Endpoint is hatun-mcp (the fleet's only spec-compliant MCP transport) — NOT a11oy, whose /mcp/ serves the web UI and rejects JSON-RPC with HTTP 405. Trailing slash on /mcp/ is required; Accept must include both application/json and text/event-stream; an SZL API key (Authorization: Bearer szl_...) is required. Doctrine v11 · Apache-2.0.",
   "mcpServers": {
     "szl-hatun": {
       "command": "npx",
       "args": [
         "-y",
         "mcp-remote",
-        "https://szlholdings-a11oy.hf.space/mcp/",
+        "https://szlholdings-hatun-mcp.hf.space/mcp/",
+        "--header",
+        "Authorization: Bearer szl_YOUR_KEY",
         "--header",
         "Accept: application/json, text/event-stream"
       ]

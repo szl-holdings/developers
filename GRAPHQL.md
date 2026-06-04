@@ -6,9 +6,24 @@ The **SZL GraphQL Gateway** gives you one typed endpoint over all five flagships
 a Khipu receipt chain — so the GraphQL surface is itself an auditable log.
 Doctrine v11 · Apache-2.0.
 
-- Live endpoint: `https://szlholdings-graphql-gateway.hf.space/graphql`
-- Interactive explorer (mobile-friendly): `https://szlholdings-graphql-gateway.hf.space/graphiql`
+> **Status (2026-06-04): NOT YET DEPLOYED.** The gateway code lives in
+> [szl-holdings/graphql-gateway](https://github.com/szl-holdings/graphql-gateway) but is not
+> currently hosted — `szlholdings-graphql-gateway.hf.space` returns **HTTP 404**. Run it locally
+> (below) to exercise the schema. The hosted endpoint/explorer/SDL URLs will activate when the
+> Space is deployed; until then, treat the routes below as the **planned contract**, not a live
+> service. (Today, each flagship's REST API is the live surface — see
+> [API_REFERENCE.md](./API_REFERENCE.md).)
+
+Planned hosted URLs (inactive until deployed):
+- Endpoint: `https://szlholdings-graphql-gateway.hf.space/graphql`
+- Interactive explorer: `https://szlholdings-graphql-gateway.hf.space/graphiql`
 - Full SDL: `https://szlholdings-graphql-gateway.hf.space/graphql/sdl`
+
+Run locally:
+```bash
+git clone https://github.com/szl-holdings/graphql-gateway && cd graphql-gateway
+pip install -r requirements.txt && uvicorn app:app --port 7860   # /graphql, /graphiql, /graphql/sdl
+```
 
 Built with **Strawberry** (code-first) + **FastAPI**, **Apollo Federation v2**
 ready — each flagship can publish its own subgraph and the gateway composes them.
@@ -111,8 +126,8 @@ curl -s https://szlholdings-graphql-gateway.hf.space/graphql \
 | | **Hatun-MCP** | **GraphQL Gateway** |
 |---|---|---|
 | Best for | LLM agents / tool-calling clients (Claude, Cursor) | apps, dashboards, scripts, typed clients |
-| Protocol | MCP Streamable HTTP + SSE (`2025-03-26`) | GraphQL over HTTP |
-| Shape | 16 governed tools, tool-call semantics | typed schema, query exactly the fields you need |
+| Protocol | MCP Streamable HTTP + SSE (`2025-06-18`) | GraphQL over HTTP |
+| Shape | 23 governed tools, tool-call semantics | typed schema, query exactly the fields you need |
 | Discovery | `tools/list` | introspection / `/graphql/sdl` / `/graphiql` |
 | Governance | Yuyay-13 gate + Khipu receipts (DSSE-signed) | Khipu receipt signed on every query/mutation |
 | Federation | n/a | Apollo Federation v2 (per-flagship subgraphs) |
