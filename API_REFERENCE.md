@@ -57,6 +57,9 @@ Base: `https://szlholdings-a11oy.hf.space`
 | POST | `/khipu/sign` · POST `/khipu/verify` · GET `/khipu/pubkey` | Receipt signing/verification (see common). |
 | GET/POST | `/wires/D` | Wire D traceparent surface. |
 | GET | `/api/a11oy/v1/puriq/formulas` | PURIQ formula catalog (master formula + axes). |
+| GET | `/api/a11oy/v1/lambda` | Λ geometric-mean trust aggregate. Reports `uniqueness: "Conjecture 1 — NOT a Theorem"` (honest). |
+| POST | `/api/lambda-bounty/submit` | **Λ-Conjecture bounty intake** — validates a submission payload, returns a hash-chained Khipu intake receipt. Intake only; eligibility decided solely by `verify-proof` CI on a PR to [`lambda-bounty`](https://github.com/szl-holdings/lambda-bounty). |
+| GET | `/api/lambda-bounty/healthz` · `/api/lambda-bounty/receipts` | Bounty-intake liveness + append-only receipt ledger (NDJSON). |
 | POST | `/api/a11oy/v2/unay/recall` | Unay memory recall (semantic lookup over governed memory). |
 | ALL | `/mcp/` | **Hatun-MCP server (16 tools)** — Streamable HTTP. Trailing slash required; `Accept: application/json, text/event-stream`. Protocol `2025-03-26`. |
 | GET | `/viz/khipu` · `/viz/doctrine` · `/viz/router` | Live Three.js visualizations. |
