@@ -56,15 +56,19 @@ Base: `https://szlholdings-a11oy.hf.space`
 | GET | `/healthz` | Health + doctrine numbers. |
 | POST | `/khipu/sign` · POST `/khipu/verify` · GET `/khipu/pubkey` | Receipt signing/verification (see common). |
 | GET/POST | `/wires/D` | Wire D traceparent surface. |
-| GET | `/api/a11oy/v1/puriq/formulas` | PURIQ formula catalog (master formula + axes). |
+| GET | `/api/a11oy/v1/puriq/formulas` | PURIQ formula catalog (master formula + axes). 5 PROVED ({F1,F11,F12,F18,F19}) recompute live with a fresh Khipu receipt chain. |
+| GET | `/api/a11oy/v1/puriq/formulas/{id}` | One formula, recomputed live (e.g. `/F1`, `/F11`, `/F12`, `/F18`, `/F19`). |
 | POST | `/api/a11oy/v2/unay/recall` | Unay memory recall (semantic lookup over governed memory). |
-| ALL | `/mcp/` | **Hatun-MCP server (16 tools)** — Streamable HTTP. Trailing slash required; `Accept: application/json, text/event-stream`. Protocol `2025-03-26`. |
+| GET | `/api/a11oy/v1/mcp/tools` · POST `/api/a11oy/v1/mcp/call` | **Canonical live MCP surface** — JSON tool catalog + tool invocation (currently 4 governed tools: `a11oy_gate`, `lambda_score`, …). |
 | GET | `/viz/khipu` · `/viz/doctrine` · `/viz/router` | Live Three.js visualizations. |
+| GET | `/mcp/` | Hatun-MCP **landing page** (HTML). The Streamable-HTTP JSON-RPC transport is **roadmap, not live** — see honest note below. |
 
-### Hatun-MCP (16 tools)
-`initialize` then `tools/list` over JSON-RPC 2.0 at `/mcp/`. Tools cover signing, verification,
-formula evaluation, memory recall, doctrine lookup, and gate evaluation. See
-[MCP_INTEGRATION.md](./MCP_INTEGRATION.md) and [`EXAMPLES/mcp_claude_config.json`](./EXAMPLES/mcp_claude_config.json).
+### MCP — honest live status
+The **live, working** MCP surface is `GET /api/a11oy/v1/mcp/tools` (JSON catalog, **4 tools** today) and
+`POST /api/a11oy/v1/mcp/call`. The Streamable-HTTP JSON-RPC server at `/mcp/` (the "16-tool Hatun-MCP"
+described in [MCP_INTEGRATION.md](./MCP_INTEGRATION.md)) is **NOT yet served as a JSON-RPC transport** —
+a `POST /mcp/` `initialize`/`tools/list` returns **HTTP 405** on the deployed Space; `GET /mcp/` serves
+an HTML landing page. Use the `/api/a11oy/v1/mcp/*` REST surface until the JSON-RPC transport ships.
 
 ---
 
@@ -99,12 +103,14 @@ Base: `https://szlholdings-rosie.hf.space`
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/healthz` | Health + doctrine numbers. |
-| POST | `/api/rosie/v2/command` | Dispatch one of the **16-command** aide catalog (recall, sign-action, replay, etc.). |
+| POST | `/api/rosie/v2/command` | Dispatch one of the **16-command** aide catalog (recall, sign-action, replay, etc.). Routed through the Λ-gate; sub-floor → HTTP 403/`gate_fail`. |
 | GET | `/api/rosie/v2/commands` | List the 16-command catalog. |
-| POST | `/unay/recall` · `/unay/store` | Unay memory recall / store. |
-| GET/POST | `/khipu/lmdb/*` | Local Khipu LMDB ingest/query (operator-local receipt store). |
-| ALL | `/mcp/` | MCP server surface (shared substrate). |
-| GET | `/console/` | Operator console SPA (verdicts + live receipt stream, Wire C). |
+| POST | `/api/rosie/v2/unay/recall` | Unay memory recall (semantic lookup). *(Root `/unay/recall` is **not** served — 404.)* |
+| GET/POST | `/api/rosie/v2/khipu/lmdb/*` | Local Khipu LMDB stats/tail/append (operator-local receipt store). *(Root `/khipu/lmdb/*` is **not** served — 404.)* |
+| GET | `/console` | Operator console SPA (verdicts + live receipt stream, Wire C). |
+
+> **MCP on rosie is roadmap, not live:** `/mcp/` returns **404** on the deployed rosie Space.
+> The shared MCP REST surface lives on a11oy (`/api/a11oy/v1/mcp/tools`).
 
 > Every `/api/rosie/v2/command` payload is first filtered through **sentra** (`/sentra/rosie/filter`).
 > `verdict=block` → HTTP 403 with sentra's reasons; `verdict=allow` → command proceeds.
@@ -117,13 +123,18 @@ Base: `https://szlholdings-sentra.hf.space`
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/api/sentra/healthz` | Health (`{"status":"ok","gates":8}`). |
-| POST | `/dual-use/check` | Dual-use pattern detection on a payload (always-on). |
-| POST | `/drone-cyber` | Drone-cyber bridge filter (preserved). |
-| POST | `/sentra/rosie/filter` | **Immune filter for aide actions** — dual-use + injection detection; returns `verdict` (allow/warn/block), `reasons[]`, `filtered_payload`, and a **DSSE `signed_receipt`**. |
-| POST | `/api/sentra/v1/verdict` | Full immune verdict (Wire B, 8 gates). |
+| GET | `/api/sentra/healthz` | Health (`{"status":"ok","gates":8,"slsa":"L1 honest …"}`). |
+| POST | `/sentra/rosie/filter` | **Immune filter for aide actions** — dual-use + injection detection; returns `verdict` (allow/warn/block), `reasons[]`, `filtered_payload`, and a **DSSE `signed_receipt`** (real Ed25519). This is the canonical always-on dual-use/injection check. |
+| POST | `/api/sentra/v1/verdict` | Full immune verdict (Wire B). Real ENFORCING gates today: threat-signature scan + size/DoS guard. Emits a signed receipt. |
+| POST | `/api/sentra/v1/verdict/attested` | Verdict + DSSE Ed25519-attested receipt (independently verifiable). |
 | POST | `/api/sentra/v1/inspect` | Full-signal inspect (no short-circuit). |
-| GET | `/api/sentra/v1/gates` · `/gates/{id}` | List / detail the 8 immune gates. |
+| GET | `/api/sentra/v1/gates` · `/api/sentra/v1/gates/{id}` | List / detail the 8 immune gates (3 enforcing, 5 declarative — honest). |
+| GET | `/drone-cyber` · `/dual-use/check` | **HTML console pages** (Three.js UI), *not* JSON APIs. A `POST` returns 405 — the enforcement logic is exposed via `/api/sentra/v1/verdict` + `/sentra/rosie/filter` above. |
+
+> **Honest gate posture:** of the 8 named gates, **gate-01 (threat signature), gate-02 (size guard)**
+> are enforcing in the live verdict engine; gates 03–08 are declarative/pass-through today (roadmap).
+> Λ-threshold enforcement and a `/section889/screen` allow-deny endpoint are implemented on a branch
+> and go live on the next sentra Space rebuild (see operational scorecard).
 
 ### `POST /sentra/rosie/filter`
 Request:
@@ -150,8 +161,10 @@ Base: `https://szlholdings-amaru.hf.space`
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/healthz` | Health + doctrine numbers. |
-| POST | `/v1/ledger` | DSSE-wrapped tick / ledger endpoint — records a memory write as a signed receipt. |
-| POST | `/khipu/sign` · `/khipu/verify` · GET `/khipu/pubkey` | Receipt signing/verification (see common). |
+| GET | `/api/amaru/khipu/ledger` | Khipu receipt ledger (the DSSE-wrapped memory-write chain). *(There is no `POST /v1/ledger`.)* |
+| GET | `/api/amaru/v1/khipu/dag` · `/api/amaru/v1/khipu/{hash}` | Khipu DAG / single-receipt lookup. |
+| POST | `/khipu/sign` · `/api/amaru/khipu/sign` · POST `/khipu/verify` · GET `/khipu/pubkey` | Receipt signing/verification (see common). |
+| GET | `/api/amaru/v1/mcp/tools` · POST `/api/amaru/v1/mcp/call` | MCP REST surface (shared substrate). |
 
 ---
 
