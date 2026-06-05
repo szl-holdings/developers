@@ -2,13 +2,14 @@
 
 **SZL Holdings developer hub** · Doctrine v11 LOCKED (749 / 14 / 163) · Apache-2.0
 
-[![Doctrine v11](https://img.shields.io/badge/Doctrine-v11_LOCKED-3b82f6?style=flat-square)](https://github.com/szl-holdings/.github/tree/main/doctrine) [![SLSA](https://img.shields.io/badge/SLSA-L1_honest-22c55e?style=flat-square)](https://slsa.dev/spec/v1.0/levels) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
+[![Doctrine v11](https://img.shields.io/badge/Doctrine-v11_LOCKED-3b82f6?style=flat-square)](https://github.com/szl-holdings/.github/tree/main/doctrine) [![SLSA](https://img.shields.io/badge/SLSA-Build_L2_(5_organ_images)-22c55e?style=flat-square)](https://slsa.dev/spec/v1.0/levels) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 
 > Every action signed. Every decision gated. Every receipt verifiable.
 
 API reference, 5-minute quickstart, MCP integration guide, substrate packages, and runnable
-examples for the five SZL flagship organs. Λ uniqueness is **Conjecture 1 (not a theorem)**;
-SLSA is **L1 (honest)** — no L2/L3 claims.
+examples for the five SZL flagship organs — each a full left-nav application. Λ uniqueness is
+**Conjecture 1 (not a theorem)**; the five organ images are **SLSA Build L1 + L2** (provenance
+attestations verify via `cosign verify-attestation`) — **L3 is not claimed**.
 
 > **Note (2026-06-03):** Contents are mirrored into
 > [`docs-site/developers/`](https://github.com/szl-holdings/docs-site/tree/main/developers).
@@ -20,12 +21,12 @@ SLSA is **L1 (honest)** — no L2/L3 claims.
 |-------|------|---------------|
 | **a11oy** | Λ-gate router / policy + receipt substrate | `https://szlholdings-a11oy.hf.space` |
 | **killinchu** | Counter-UAS / drone intelligence (12 endpoints) | `https://szlholdings-killinchu.hf.space` |
-| **rosie** | Operator console / personal aide | `https://szlholdings-rosie.hf.space` |
+| **rosie** | Operator application (full 10-view app at `/`) | `https://szlholdings-rosie.hf.space` |
 | **sentra** | Cross-cutting immune system | `https://szlholdings-sentra.hf.space` |
 | **amaru** | Memory cortex | `https://szlholdings-amaru.hf.space` |
 
 All five endpoints return Doctrine v11 from `/healthz`: 749 declarations / 14 axioms / 163 sorries,
-locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** SLSA L1 honest.
+locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** Five organ images are SLSA Build L2 (L3 not claimed).
 
 ## Docs
 
@@ -41,12 +42,17 @@ locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** SLSA L1 honest.
 
 ## Honesty boundary
 
-- SLSA **L1** (honest) — provenance generated; **L2/L3 not claimed**.
+- The **five organ images are SLSA Build L1 + L2** — build provenance generated and the L2 SLSA
+  provenance attestation verifies via `cosign verify-attestation --type slsaprovenance` (strict
+  per-organ identity, keyless Fulcio+Rekor). **L3 is NOT claimed.** The mesh **bundle artifact**
+  itself is signed but **not yet attested** (owner-only GHCR grant pending).
+- **Proved PURIQ formulas = exactly 5** — F1, F11, F12, F18, F19 (Lean 4, zero-sorry); rest Roadmap.
 - Λ-uniqueness = **Conjecture 1** (open bounty, `CAUCHY_ND` sorry open) — **not a theorem**.
-- cosign DSSE signatures are real ECDSA-P256-SHA256.
+- cosign DSSE signatures are real ECDSA-P256-SHA256; receipts are real-DSSE-or-honestly-UNSIGNED.
 - No FedRAMP / Iron Bank / CMMC claims — see [docs-site compliance](https://docs.szlholdings.com/compliance).
 - Section 889 = exactly **5 vendors**.
 
 *Doctrine v11 LOCKED · 749/14/163 · c7c0ba17 · Apache-2.0*
 
-Signed-off-by: stephenlutar2-hash <stephenlutar2@gmail.com>
+Signed-off-by: Stephen P. Lutar Jr. <stephenlutar2@gmail.com>
+
