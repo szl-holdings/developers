@@ -1,14 +1,24 @@
 {
-  "_comment": "ROADMAP config for the SZL Hatun-MCP JSON-RPC server. NOTE: the /mcp/ Streamable-HTTP transport is NOT live yet (POST returns HTTP 405) — this bridge will not connect until it ships. The LIVE MCP surface today is REST: GET https://szlholdings-a11oy.hf.space/api/a11oy/v1/mcp/tools (4 tools). Doctrine v11 · Apache-2.0.",
+  "_comment": "Drop-in Claude Desktop / Cursor MCP config for the SZL governed-tool endpoints. The canonical live MCP transports are served same-origin by the application Spaces themselves: a11oy (https://szlholdings-a11oy.hf.space/mcp/) and killinchu (https://szlholdings-killinchu.hf.space/mcp/). Protocol 2024-11-05, JSON-RPC 2.0 over HTTP. GET /mcp/ returns a discovery card with the live tool list (currently 5 governed tools: retrieve_context, policy_check, trust_score, sign_receipt, verify_receipt). The earlier standalone hatun-mcp / mcp-receipts-server Spaces are retired. Use a trailing slash on /mcp/; Accept should include application/json.",
   "mcpServers": {
-    "szl-hatun": {
+    "szl-a11oy": {
       "command": "npx",
       "args": [
         "-y",
         "mcp-remote",
         "https://szlholdings-a11oy.hf.space/mcp/",
         "--header",
-        "Accept: application/json, text/event-stream"
+        "Accept: application/json"
+      ]
+    },
+    "szl-killinchu": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://szlholdings-killinchu.hf.space/mcp/",
+        "--header",
+        "Accept: application/json"
       ]
     }
   }
