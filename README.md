@@ -47,7 +47,7 @@ locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** Service images are S
 - **Proved PURIQ formulas = exactly 5** — F1, F11, F12, F18, F19 (Lean 4, zero-sorry); rest Roadmap.
 - Λ-uniqueness = **Conjecture 1** (open bounty, `CAUCHY_ND` sorry open) — **not a theorem**.
 - cosign DSSE signatures are real ECDSA-P256-SHA256; receipts are real-DSSE-or-honestly-UNSIGNED.
-- No FedRAMP / Iron Bank / CMMC claims — see [docs-site compliance](https://docs.szlholdings.com/compliance).
+- No FedRAMP / Iron Bank / CMMC claims — see [docs-site compliance](https://szl-holdings.github.io/docs-site/compliance).
 - Section 889 = exactly **5 vendors**.
 
 *Doctrine v11 LOCKED · 749/14/163 · c7c0ba17 · Apache-2.0*
