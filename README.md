@@ -2,15 +2,16 @@
 
 **SZL Holdings developer hub** · Doctrine v11 LOCKED (749 / 14 / 163) · Apache-2.0
 
-[![Doctrine v11](https://img.shields.io/badge/Doctrine-v11_LOCKED-3b82f6?style=flat-square)](https://github.com/szl-holdings/.github/tree/main/doctrine) [![SLSA](https://img.shields.io/badge/SLSA-Build_L1_%2B_L2-22c55e?style=flat-square)](https://slsa.dev/spec/v1.0/levels) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
+[![Doctrine v11](https://img.shields.io/badge/Doctrine-v11_LOCKED-3b82f6?style=flat-square)](https://github.com/szl-holdings/.github/tree/main/doctrine) [![SLSA](https://img.shields.io/badge/SLSA-Build_L1_honest_%C2%B7_L2_roadmap-22c55e?style=flat-square)](https://slsa.dev/spec/v1.0/levels) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 
 > Every action signed. Every decision gated. Every receipt verifiable.
 
 API reference, 5-minute quickstart, MCP integration guide, substrate packages, and runnable
 examples for the two SZL products — **a11oy** (command platform) and **killinchu** (drones &
 vessels) — each a full left-nav application. Λ uniqueness is **Conjecture 1 (not a theorem)**;
-the service images are **SLSA Build L1 + L2** (provenance attestations verify via
-`cosign verify-attestation`) — **L3 is not claimed**.
+the service images are **SLSA Build L1 (honest)** — cosign keyless-signed and Rekor-anchored,
+verifiable via `cosign verify`. **SLSA L2 verified build-provenance (isolated builders) is on
+the roadmap**; L3 / FedRAMP / Iron Bank / CMMC are **not claimed**.
 
 > **Note (2026-06-03):** Contents are mirrored into
 > [`docs-site/developers/`](https://github.com/szl-holdings/docs-site/tree/main/developers).
@@ -24,7 +25,7 @@ the service images are **SLSA Build L1 + L2** (provenance attestations verify vi
 | **killinchu** | Drones &amp; vessels field tool — counter-UAS + maritime picture (12 endpoints) | `https://szlholdings-killinchu.hf.space` |
 
 Both endpoints return Doctrine v11 from `/healthz`: 749 declarations / 14 axioms / 163 sorries,
-locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** Service images are SLSA Build L1 + L2 (L3 not claimed).
+locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** Service images are SLSA Build L1 honest (cosign keyless-signed, Rekor-anchored); L2 verified-provenance on the roadmap (L3 not claimed).
 
 ## Docs
 
@@ -40,10 +41,10 @@ locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** Service images are S
 
 ## Honesty boundary
 
-- The **service images are SLSA Build L1 + L2** — build provenance generated and the L2 SLSA
-  provenance attestation verifies via `cosign verify-attestation --type slsaprovenance` (strict
-  per-image identity, keyless Fulcio+Rekor). **L3 is NOT claimed.** The mesh **bundle artifact**
-  itself is signed but **not yet attested** (owner-only GHCR grant pending).
+- The **service images are SLSA Build L1 (honest)** — cosign keyless-signed (Fulcio + Rekor),
+  verifiable via `cosign verify`. **SLSA L2 verified build-provenance (isolated builders +
+  verified provenance attestation) is on the roadmap.** **L3 is NOT claimed.** The mesh **bundle
+  artifact** is signed but **not yet provenance-attested** (owner-only GHCR grant pending).
 - **Proved PURIQ formulas = exactly 5** — F1, F11, F12, F18, F19 (Lean 4, zero-sorry); rest Roadmap.
 - Λ-uniqueness = **Conjecture 1** (open bounty, `CAUCHY_ND` sorry open) — **not a theorem**.
 - cosign DSSE signatures are real ECDSA-P256-SHA256; receipts are real-DSSE-or-honestly-UNSIGNED.
