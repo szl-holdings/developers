@@ -4,17 +4,22 @@ All endpoints are HTTPS. Base URLs are the live Hugging Face Spaces. Doctrine v1
 Honest note: some routes are demo/public; commercial usage is metered via API keys issued by the
 customer portal. Λ uniqueness is **Conjecture 1 (not a theorem)**; SLSA **L1 (honest)**.
 
-| Organ | Base URL |
-|-------|----------|
-| a11oy | `https://szlholdings-a11oy.hf.space` |
-| killinchu | `https://szlholdings-killinchu.hf.space` |
-| rosie | `https://szlholdings-rosie.hf.space` |
-| sentra | `https://szlholdings-sentra.hf.space` |
-| amaru | `https://szlholdings-amaru.hf.space` |
+Two products ship live today; their Spaces are deployed and return `/healthz`:
+
+| Product | Base URL | Status |
+|---------|----------|--------|
+| a11oy | `https://szlholdings-a11oy.hf.space` | **Live** |
+| killinchu | `https://szlholdings-killinchu.hf.space` | **Live** |
+
+> The Provenance Anchor, Operator, and Policy roles (internal codenames *amaru*, *rosie*,
+> *sentra* — retired) are **roadmap**: the Spaces `szlholdings-amaru/rosie/sentra.hf.space`
+> are **not deployed** (HTTP 404) and the standalone repos do not exist yet. The live policy
+> gate, memory ledger, and receipt DAG ship **inside a11oy** today (see below). The roadmap
+> route shapes are listed at the end for forward reference only — do not call them as live.
 
 ---
 
-## Common provenance endpoints (a11oy, amaru, killinchu, rosie, sentra)
+## Common provenance endpoints (a11oy, killinchu)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -92,86 +97,33 @@ Base: `https://szlholdings-killinchu.hf.space` · Repo is **private** (defense I
 | GET | `/globe` | Cesium globe HUD with live Doctrine v11 chip + `LEGAL_BOUNDARIES`. |
 
 > **Posture:** *"We sense, we evidence; we do not jack into third-party drones."* Drone positions
-> are deterministic **SIMULATED** (seeded); geofence is a **static snapshot** — both honestly labeled.
-
----
-
-## rosie — personal aide / operator console
-
-Base: `https://szlholdings-rosie.hf.space`
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/healthz` | Health + doctrine numbers. |
-| POST | `/api/rosie/v2/command` | Dispatch one of the **16-command** aide catalog (recall, sign-action, replay, etc.). Routed through the Λ-gate; sub-floor → HTTP 403/`gate_fail`. |
-| GET | `/api/rosie/v2/commands` | List the 16-command catalog. |
-| POST | `/api/rosie/v2/unay/recall` | Unay memory recall (semantic lookup). *(Root `/unay/recall` is **not** served — 404.)* |
-| GET/POST | `/api/rosie/v2/khipu/lmdb/*` | Local Khipu LMDB stats/tail/append (operator-local receipt store). *(Root `/khipu/lmdb/*` is **not** served — 404.)* |
-| GET | `/console` | Operator console SPA (verdicts + live receipt stream, Wire C). |
-
-> **MCP on rosie is roadmap, not live:** `/mcp/` returns **404** on the deployed rosie Space.
-> The shared MCP REST surface lives on a11oy (`/api/a11oy/v1/mcp/tools`).
-
-> Every `/api/rosie/v2/command` payload is first filtered through **sentra** (`/sentra/rosie/filter`).
-> `verdict=block` → HTTP 403 with sentra's reasons; `verdict=allow` → command proceeds.
-
----
-
-## sentra — cross-cutting immune system
-
-Base: `https://szlholdings-sentra.hf.space`
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/sentra/healthz` | Health (`{"status":"ok","gates":8,"slsa":"L1 honest …"}`). |
-| POST | `/sentra/rosie/filter` | **Immune filter for aide actions** — dual-use + injection detection; returns `verdict` (allow/warn/block), `reasons[]`, `filtered_payload`, and a **DSSE `signed_receipt`** (real Ed25519). This is the canonical always-on dual-use/injection check. |
-| POST | `/api/sentra/v1/verdict` | Full immune verdict (Wire B). Real ENFORCING gates today: threat-signature scan + size/DoS guard. Emits a signed receipt. |
-| POST | `/api/sentra/v1/verdict/attested` | Verdict + DSSE Ed25519-attested receipt (independently verifiable). |
-| POST | `/api/sentra/v1/inspect` | Full-signal inspect (no short-circuit). |
-| GET | `/api/sentra/v1/gates` · `/api/sentra/v1/gates/{id}` | List / detail the 8 immune gates (3 enforcing, 5 declarative — honest). |
-| GET | `/drone-cyber` · `/dual-use/check` | **HTML console pages** (Three.js UI), *not* JSON APIs. A `POST` returns 405 — the enforcement logic is exposed via `/api/sentra/v1/verdict` + `/sentra/rosie/filter` above. |
-
-> **Honest gate posture:** of the 8 named gates, **gate-01 (threat signature), gate-02 (size guard)**
-> are enforcing in the live verdict engine; gates 03–08 are declarative/pass-through today (roadmap).
-> Λ-threshold enforcement and a `/section889/screen` allow-deny endpoint are implemented on a branch
-> and go live on the next sentra Space rebuild (see operational scorecard).
-
-### `POST /sentra/rosie/filter`
-Request:
-```json
-{ "payload": "<user input or aide-action-context>", "caller": "rosie", "session_id": "abc123" }
-```
-Response:
-```json
-{
-  "verdict": "allow",
-  "reasons": [],
-  "filtered_payload": "<original if allowed>",
-  "signed_receipt": { "payloadType": "...", "payload": "<b64>", "signatures": [ ... ] }
-}
-```
-Injection signatures detected include `</system>`, `ignore previous`, and common jailbreak patterns.
-
----
-
-## amaru — memory cortex
-
-Base: `https://szlholdings-amaru.hf.space`
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/healthz` | Health + doctrine numbers. |
-| GET | `/api/amaru/khipu/ledger` | Khipu receipt ledger (the DSSE-wrapped memory-write chain). *(There is no `POST /v1/ledger`.)* |
-| GET | `/api/amaru/v1/khipu/dag` · `/api/amaru/v1/khipu/{hash}` | Khipu DAG / single-receipt lookup. |
-| POST | `/khipu/sign` · `/api/amaru/khipu/sign` · POST `/khipu/verify` · GET `/khipu/pubkey` | Receipt signing/verification (see common). |
-| GET | `/api/amaru/v1/mcp/tools` · POST `/api/amaru/v1/mcp/call` | MCP REST surface (shared substrate). |
+> are deterministic **SIMULATED** (seeded); geofence is a **static snapshot**; the effector path
+> is a **command demonstration, simulated** — all honestly labeled.
 
 ---
 
 ## Errors
 
-Standard HTTP semantics: `200` success, `400` malformed request, `403` blocked by sentra (body
+Standard HTTP semantics: `200` success, `400` malformed request, `403` blocked by policy gate (body
 includes `reasons`), `404` unknown route, `429` quota exceeded, `5xx` server error. All governed
 responses are accompanied by a signed receipt where applicable.
+
+---
+
+## Roadmap roles — NOT yet served (forward reference only)
+
+The following route shapes describe roadmap roles. **Their Spaces are not deployed** —
+`szlholdings-amaru/rosie/sentra.hf.space` return HTTP 404 today. The live equivalents ship
+inside a11oy. Do not call these as live endpoints; they are documented so the eventual public
+contract is stable.
+
+- **Provenance Anchor** *(internal codename amaru, retired)* — memory cortex / Khipu receipt
+  ledger + DAG. Live equivalent today: a11oy `/khipu/*` and the governed memory under
+  `/api/a11oy/v2/unay/recall`.
+- **Operator** *(internal codename rosie, retired)* — aide / operator console, 16-command
+  catalog, operator-local Khipu LMDB store, Wire-C receipt stream. Roadmap.
+- **Policy** *(internal codename sentra, retired)* — cross-cutting immune system: dual-use +
+  injection filter, verdict/inspect engine, 8 named gates. Live equivalent today: the policy
+  gate enforced inside a11oy's Λ-gate router.
 
 *Signed Yachay `<yachay@szlholdings.dev>` · Co-Authored-By: Perplexity Computer Agent · Apache-2.0*
