@@ -39,7 +39,7 @@ you need without taking the whole monorepo runtime.
 | **evidence-ledger** | DSSE-signed evidence ledger primitives (sign / verify / chain). |
 | **doctrine-runtime** | Doctrine v11 number source-of-truth + guards (749/14/163). |
 | **memory-core** / **memory-fabric** | Unay-style governed memory store + recall. |
-| **decision-engine** | Deny-by-default policy decision primitives (the sentra pattern). |
+| **decision-engine** | Deny-by-default policy decision primitives (the Policy role pattern; internal codename *sentra*, retired). |
 | **observability-core** | OpenTelemetry export of governed spans onto the audit fiber. |
 | **agents-sdk-bridge** | Bridge to compose agent loops on the substrate. |
 
