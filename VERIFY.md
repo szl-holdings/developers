@@ -4,13 +4,20 @@
 
 **Doctrine v11 LOCKED · 749/14/163 · kernel `c7c0ba17` · Λ = Conjecture 1 (not a theorem)**
 
+> **Honest scope.** Two products ship live: **a11oy** and **killinchu**. The Provenance Anchor,
+> Operator, and Policy roles (internal codenames *amaru*, *rosie*, *sentra* — retired) are
+> **roadmap**: their Spaces (`szlholdings-amaru/rosie/sentra.hf.space`) and standalone repos do
+> **not** exist yet, so the verification commands below intentionally cover only the two live
+> products plus the shared Lean kernel and UDS bundle. Do not attempt to verify roadmap-role
+> images — they are not published.
+
 ---
 
 ## Quick summary of what is verifiable
 
 | Claim | Tool | Time to verify |
 |---|---|---|
-| 5 live HF demos (HTTP 200) | `curl` | 30 seconds |
+| 2 live HF demos (HTTP 200) | `curl` | 30 seconds |
 | SLSA **L1 honest** — cosign-signed deployed images (real Rekor) | `cosign verify` | 2 minutes |
 | cosign keyless signed images | `cosign verify` | 2 minutes |
 | Rekor transparency log entries | browser or `rekor-cli` | 1 minute |
@@ -21,10 +28,10 @@
 
 ---
 
-## 1. Five live demos — confirm HTTP 200
+## 1. Live demos — confirm HTTP 200
 
 ```bash
-for org in a11oy sentra amaru killinchu rosie; do
+for org in a11oy killinchu; do
   echo -n "$org: "
   curl -sf -o /dev/null -w "%{http_code}" \
     "https://szlholdings-${org}.hf.space/api/${org}/v1/honest" && echo " ✓"
@@ -49,11 +56,11 @@ curl -s https://szlholdings-a11oy.hf.space/api/a11oy/v1/honest \
 
 ## 2. SLSA — honest level is **L1** (cosign-signed deployed images, real Rekor)
 
-**Honest posture (do not overclaim):** the **deployed container images** are **cosign-signed (SLSA
-L1)** with real Rekor transparency-log entries — that is what the project's locked compliance
-authority (`.compliance/SLSA_LEVEL.md`) asserts and what `cosign verify` proves on the image you
-actually run. **L2 is roadmap (via Wire D), not yet claimed for the deployed images; L3 is not
-claimed.** See §3 for the canonical `cosign verify` of the deployed image.
+**Honest posture (do not overclaim):** the **deployed container images** of the two live products
+are **cosign-signed (SLSA L1)** with real Rekor transparency-log entries — that is what the
+project's locked compliance authority (`.compliance/SLSA_LEVEL.md`) asserts and what `cosign verify`
+proves on the image you actually run. **L2 is roadmap (via Wire D), not yet claimed for the
+deployed images; L3 is not claimed.** See §3 for the canonical `cosign verify` of the deployed image.
 
 > The build-provenance attestations listed below are **real**, but they attest the build artifacts
 > (e.g. the `dist/` bundle) — a *different artifact* than the deployed image. They are genuine and
@@ -62,12 +69,12 @@ claimed.** See §3 for the canonical `cosign verify` of the deployed image.
 
 ### Build-provenance attestation registry (real, but artifact-scoped — see note above)
 
+Only the two shipping products have published images/attestations. Roadmap-role images are **not
+published** and are intentionally omitted.
+
 | Repo | Digest (latest) | Attestation ID | Rekor log index | Sigstore instance |
 |---|---|---|---|---|
 | a11oy | `sha256:1cfd28e0...` | [29916789](https://github.com/szl-holdings/a11oy/attestations/29916789) | [1723769508](https://search.sigstore.dev/?logIndex=1723769508) | Public Good |
-| sentra | `sha256:e745deac...` | [29917249](https://github.com/szl-holdings/sentra/attestations/29917249) | [1723794608](https://search.sigstore.dev/?logIndex=1723794608) | Public Good |
-| amaru | `sha256:ad595555...` | [29917085](https://github.com/szl-holdings/amaru/attestations/29917085) | [1723784350](https://search.sigstore.dev/?logIndex=1723784350) | Public Good |
-| rosie | `sha256:4045609d...` | [29901651](https://github.com/szl-holdings/rosie/attestations/29901651) | [1722745939](https://search.sigstore.dev/?logIndex=1722745939) | Public Good |
 | killinchu | `sha256:85f92bd2...` | [29917005](https://github.com/szl-holdings/killinchu/attestations/29917005) | N/A (private repo) | GitHub Sigstore |
 
 ### Verify command
@@ -83,21 +90,6 @@ gh attestation verify \
 # REPO                   PREDICATE_TYPE                  WORKFLOW
 # szl-holdings/a11oy    https://slsa.dev/provenance/v1  .github/workflows/ghcr-build-push.yml@refs/heads/main
 
-# sentra
-gh attestation verify \
-  oci://ghcr.io/szl-holdings/sentra@sha256:e745deac... \
-  --repo szl-holdings/sentra
-
-# amaru
-gh attestation verify \
-  oci://ghcr.io/szl-holdings/amaru@sha256:ad595555... \
-  --repo szl-holdings/amaru
-
-# rosie
-gh attestation verify \
-  oci://ghcr.io/szl-holdings/rosie@sha256:4045609d... \
-  --repo szl-holdings/rosie
-
 # killinchu (private repo — requires authorized access)
 gh attestation verify \
   oci://ghcr.io/szl-holdings/killinchu@sha256:85f92bd2... \
@@ -108,9 +100,9 @@ gh attestation verify \
 
 - **Deployed images: SLSA L1** — cosign keyless-signed, with a real Rekor entry (verify in §3). This
   is the claim a judge can confirm against the image they actually run.
-- The build-provenance attestations above are real and use predicate type
-  `https://slsa.dev/provenance/v1` (Fulcio SAN `…/ghcr-build-push.yml@refs/heads/main`), but they
-  attest the build artifact, not the deployed image — so they do not, by themselves, make the
+- The build-provenance attestation above is real and uses predicate type
+  `https://slsa.dev/provenance/v1` (Fulcio SAN `…/ghcr-build-push.yml@refs/heads/main`), but it
+  attests the build artifact, not the deployed image — so it does not, by itself, make the
   deployed image "L2 verified."
 - **L2** (build-provenance attestation on the deployed image) is **roadmap via Wire D — not yet
   claimed.** **L3** is **not claimed** (requires signing in an isolated reusable workflow).
@@ -124,26 +116,21 @@ gh attestation verify \
 # Install cosign if needed:
 # brew install cosign   # or: go install github.com/sigstore/cosign/v2/cmd/cosign@latest
 
-# Verify any flagship image
+# Verify the a11oy image
 cosign verify ghcr.io/szl-holdings/a11oy:uds-v0.2.0 \
   --certificate-identity-regexp="^https://github.com/szl-holdings/" \
   --certificate-oidc-issuer="https://token.actions.githubusercontent.com"
 
-# Same for other organs:
-for organ in sentra amaru rosie killinchu; do
-  cosign verify ghcr.io/szl-holdings/${organ}:uds-v0.2.0 \
-    --certificate-identity-regexp="^https://github.com/szl-holdings/" \
-    --certificate-oidc-issuer="https://token.actions.githubusercontent.com"
-done
+# Same for killinchu (private repo — requires authorized pull):
+cosign verify ghcr.io/szl-holdings/killinchu:uds-v0.2.0 \
+  --certificate-identity-regexp="^https://github.com/szl-holdings/" \
+  --certificate-oidc-issuer="https://token.actions.githubusercontent.com"
 ```
 
 ### Browse Rekor entries directly
 
 - a11oy (latest): https://search.sigstore.dev/?logIndex=1723769508
 - a11oy (previous): https://search.sigstore.dev/?logIndex=1723152598
-- sentra: https://search.sigstore.dev/?logIndex=1723794608
-- amaru: https://search.sigstore.dev/?logIndex=1723784350
-- rosie: https://search.sigstore.dev/?logIndex=1722745939
 
 ```bash
 # Or use rekor-cli
@@ -175,38 +162,37 @@ uds-cli bundle deploy szl-mesh-v0.4.0.tar.zst --confirm
 
 ### What's in the bundle
 
-`szl-mesh:v0.4.0` composes:
-- `ghcr.io/szl-holdings/a11oy` — Khipu receipt substrate
-- `ghcr.io/szl-holdings/sentra` — policy immune system
-- `ghcr.io/szl-holdings/amaru` — cited reasoning cortex
-- `ghcr.io/szl-holdings/rosie` — operator console
-- `ghcr.io/szl-holdings/killinchu` — counter-UAS organ
+`szl-mesh:v0.4.0` composes the two shipping product images:
+- `ghcr.io/szl-holdings/a11oy` — Λ-gate router / Khipu receipt substrate
+- `ghcr.io/szl-holdings/killinchu` — counter-UAS / drone-intelligence vertical
 
-Each component image is cosign-signed (**SLSA L1 honest**, real Rekor — see §3); the build-provenance
-attestations in §2 are real but artifact-scoped. L2 on the deployed images is roadmap (Wire D).
+The roadmap roles (Provenance Anchor / Operator / Policy) ship their live equivalents **inside
+a11oy** and are not separate images today. Each shipping component image is cosign-signed
+(**SLSA L1 honest**, real Rekor — see §3); the build-provenance attestations in §2 are real but
+artifact-scoped. L2 on the deployed images is roadmap (Wire D).
 
 ---
 
 ## 5. Live DSSE Khipu receipt round-trip
 
-Exercise the actual receipt signing and verification on the running Space:
+Exercise the actual receipt signing and verification on a running Space:
 
 ```bash
-# Sign a receipt on the amaru Space (ECDSA P-256-SHA256)
+# Sign a receipt on the killinchu Space (ECDSA P-256-SHA256)
 DSSE=$(curl -s -X POST \
-  https://szlholdings-amaru.hf.space/api/amaru/khipu/sign \
+  https://szlholdings-killinchu.hf.space/khipu/sign \
   -H 'content-type: application/json' \
   -d '{"receipt":{"action_id":"verify-demo","ts":"2026-06-04T00:00:00Z"}}' \
   | jq .dsse)
 
 # Verify the DSSE envelope against the published szlholdings-cosign key
 curl -s -X POST \
-  https://szlholdings-amaru.hf.space/api/amaru/khipu/verify \
+  https://szlholdings-killinchu.hf.space/khipu/verify \
   -H 'content-type: application/json' \
   -d "{\"dsse\":$DSSE}" | jq '{verified, signatures}'
-# => {"verified": true, "keyid_match": true, ...}   (amaru holds the cosign key — REAL signature)
+# => {"verified": true, "keyid_match": true, ...}   (killinchu holds the cosign key — REAL signature)
 
-# Note on signatures: amaru and killinchu Spaces hold the cosign private key, so their
+# Note on signatures: the killinchu Space holds the cosign private key, so its
 # /khipu/sign returns a REAL ECDSA-P256-SHA256 signature and /khipu/verify => verified:true.
 # The a11oy Space does NOT hold the key today, so its envelope is honestly UNSIGNED
 # ("honesty":"UNSIGNED — no SZL_COSIGN_PRIVATE_KEY_PEM …") and verify => verified:false.
@@ -236,6 +222,11 @@ grep -r "theorem\|def\|lemma\|axiom" --include="*.lean" | wc -l
 # Canonical numbers: https://github.com/szl-holdings/.github/blob/main/.github/data/lean_numbers.json
 ```
 
+Note: exactly **5** formulas are locked-proven {F1, F11, F12, F18, F19}; everything else is
+roadmap. Λ unconditional is **Conjecture 1** (machine-checked false, never a theorem); the
+conditional Λ result is axiom-free PROVEN (Wave 22); Khipu BFT is **Conjecture 2** (Wave 23
+`khipu_quorum_safety_conditional` is conditional-only).
+
 ---
 
 ## 7. Λ = Conjecture 1 — verify the open bounty
@@ -257,7 +248,10 @@ grep -r "CAUCHY_ND" /path/to/lutar-lean --include="*.lean"
 
 ## 8. Multi-party witnesses — DSSE Khipu receipts
 
-The Khipu receipt architecture is multi-party-witnessed at the protocol level (BFT quorum-capable). Each node in the hash-linked DAG carries:
+The Khipu receipt architecture is multi-party-witnessable at the protocol level (Khipu BFT is
+**Conjecture 2** — quorum safety is proven only conditionally in Wave 23
+`khipu_quorum_safety_conditional`, n≥3f+1 with honest non-equivocation; it is **not** an
+unconditional theorem). Each node in the hash-linked DAG carries:
 
 ```json
 {
@@ -283,9 +277,11 @@ The hash-link invariant `parent_digest = sha256(canonical_json(parent))` is enfo
 
 | Item | Status |
 |---|---|
+| Roadmap-role Spaces/images (amaru/rosie/sentra) | ❌ Not deployed — HTTP 404; do not attempt to verify |
 | SLSA L3 | ❌ Not claimed. Requires isolated signing in a separate reusable workflow |
 | killinchu public Rekor entry | ⚠️ Private repo — GitHub Sigstore instance; no public tlog (by design, not a gap) |
 | Λ-uniqueness (unconditional) | ⚠️ Conjecture 1 — open bounty; do not claim as theorem |
+| Khipu BFT (unconditional) | ⚠️ Conjecture 2 — only conditional safety proven (Wave 23) |
 | Cardano mainnet anchoring | ⚠️ Demo-seeded; not on mainnet |
 | FedRAMP / CMMC / Iron Bank | ❌ Not claimed |
 | Receipt signatures when `SZL_COSIGN_PRIVATE_PEM` absent | ⚠️ Labelled UNSIGNED — never silently fabricated |
