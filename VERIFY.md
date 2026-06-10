@@ -222,7 +222,7 @@ grep -r "theorem\|def\|lemma\|axiom" --include="*.lean" | wc -l
 # Canonical numbers: https://github.com/szl-holdings/.github/blob/main/.github/data/lean_numbers.json
 ```
 
-Note: exactly **5** formulas are locked-proven {F1, F11, F12, F18, F19}; everything else is
+Note: exactly **8** formulas are locked-proven {F1, F4, F7, F11, F12, F18, F19, F22}; everything else is
 roadmap. Λ unconditional is **Conjecture 1** (machine-checked false, never a theorem); the
 conditional Λ result is axiom-free PROVEN (Wave 22); Khipu BFT is **Conjecture 2** (Wave 23
 `khipu_quorum_safety_conditional` is conditional-only).
