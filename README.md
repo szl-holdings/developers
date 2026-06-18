@@ -45,7 +45,7 @@ locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** Service images are S
   verifiable via `cosign verify`. **SLSA L2 verified build-provenance (isolated builders +
   verified provenance attestation) is on the roadmap.** **L3 is NOT claimed.** The mesh **bundle
   artifact** is signed but **not yet provenance-attested** (owner-only GHCR grant pending).
-- **Proved PURIQ formulas = exactly 5** — F1, F11, F12, F18, F19 (Lean 4, zero-sorry); rest Roadmap.
+- **Locked-proven PURIQ formulas = exactly 8** — {F1, F4, F7, F11, F12, F18, F19, F22} @ `c7c0ba17` (Lean 4, kernel-clean; F4/F7/F22 landed 2026-06-10); rest Roadmap.
 - Λ-uniqueness = **Conjecture 1** (open bounty, `CAUCHY_ND` sorry open) — **not a theorem**.
 - cosign DSSE signatures are real ECDSA-P256-SHA256; receipts are real-DSSE-or-honestly-UNSIGNED.
 - No FedRAMP / Iron Bank / CMMC claims — see [docs-site compliance](https://szl-holdings.github.io/docs-site/compliance).
