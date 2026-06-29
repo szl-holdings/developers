@@ -102,6 +102,79 @@ Base: `https://szlholdings-killinchu.hf.space` · Repo is **private** (defense I
 
 ---
 
+## a11oy frontier endpoints (PINN · E8 · specdec · materials · evidence-pack · conformal)
+
+Base: `https://a-11-oy.com` · live a11oy Space. These shipped 2026-06-28+ and are governed by
+the same doctrine: **8 locked-proven** {F1,F4,F7,F11,F12,F18,F19,F22} @ kernel `c7c0ba17`;
+**Λ = Conjecture 1** (advisory, capped ≤ 0.99, never a theorem); values **MODELED** unless
+MEASURED; every action emits a SHA3-256 Khipu receipt (honestly `signed` or `DSSE_PLACEHOLDER`).
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/a11oy/v1/govern/infer` | Governed inference: model routing + Λ-gate + split-conformal block + signed receipt. |
+| POST | `/api/a11oy/v1/pinn/identify` | Inverse-PINN identification (demos `duffing`, `calphad`; `case:ill_posed` ⇒ RED). Self-doubt gate refuses non-identifiable params. |
+| GET | `/api/a11oy/v1/pinn/health` | PINN organ liveness; `supported_systems: [duffing, redlich_kister]`. |
+| GET/POST | `/api/a11oy/v1/e8/verify` | E8-lattice encoding of a 256-bit digest → nearest lattice point. **Error-detection geometry only.** |
+| GET | `/api/a11oy/v1/specdec/health` | Speculative-decoding readiness (same-family draft+target probe). |
+| POST | `/api/a11oy/v1/specdec/run` | Spec-decode run; honest **`SPEC-DECODE ROADMAP`** + `measured:UNAVAILABLE` when no same-family pair. |
+| POST | `/api/a11oy/v1/materials/novelty` | Crystal-novelty via isometry-invariant PDD fingerprint + chained receipt. |
+| POST | `/api/a11oy/v1/materials/certify` | PAC-Bayes (McAllester 1999) certified risk bound + receipt. |
+| GET | `/api/a11oy/v1/assurance/evidence-pack` | Offline-verifiable auditor pack with `pack_sha3_256` self-digest. |
+| GET | `/api/lake/v1/health` | szl-lake receipt ledger health; per-organ `chain_head`. |
+
+### `POST /govern/infer`
+Request: `{ "prompt": "..." }`. Returns `decision` (`allow`/`block`), `answer`, `governance`
+(Λ advisory + named gates), a `conformal` coverage block (split-conformal, Vovk 1999 /
+Angelopoulos & Bates 2021; label `CP-90 SAMPLE`), and the doctrine block. The router policy is
+`sensitivity-first → license(GREEN) → smallest-tier → max-ctx`.
+
+### `POST /pinn/identify`
+Request: `{ "demo": "duffing" | "calphad", "case"?: "ill_posed" }`. Returns `convergence.label`
+(`GREEN`/`RED`), `discovered[]` (each with `value`, `ci95`, `fisher_information`, `identifiable`,
+`label:"MODELED"`, F19 Bekenstein plausibility), and a `lambda_advisory` (capped ≤ 0.99). The
+self-doubt gate marks any parameter with Fisher `< 1e-08` or `κ(FIM) ≥ 1e+08` as
+**RED/UNIDENTIFIABLE** and does **not** assert it. CALPHAD recovers Redlich-Kister L0/L1/L2.
+
+### `GET/POST /e8/verify`
+POST `{ "digest": "<64-hex sha3_256>" }` (GET verifies a live ledger head). Returns the 8 ×
+32-bit `coords`, `nearest_lattice_point`, `min_squared_distance` (0 ⇒ on-lattice), and an
+`error_detection` block. **Honest:** E8 optimality is **Viazovska (2017, *Annals* 185:991–1015)**,
+formalized in Lean (EPFL) — **cited, not produced here**. Error-DETECTION geometry only; **NOT**
+adversarial-substitution resistance, collision resistance, or BFT safety; adds **0** to locked-8.
+
+### `GET /specdec/health` · `POST /specdec/run`
+Leviathan et al. 2023 (arXiv:2211.17192), **reimplemented from the public paper**. Lossless
+spec-decode needs a draft+target sharing one tokenizer. When no same-family pair is reachable the
+run returns `label:"SPEC-DECODE ROADMAP"`, `measured:"UNAVAILABLE"`, `quality_delta:"UNAVAILABLE"`
+and a clearly-labelled `accounting_modeled` curve — **no faked speedup**.
+
+### `POST /materials/novelty` · `POST /materials/certify`
+There is **no** `/materials/predict`. **novelty**: POST a crystal
+`{a,b,c,alpha,beta,gamma,sites:[{el,x,y,z}]}`; returns `novel`, a Kurlin-style PDD
+`fingerprint`/`fingerprint_digest`, and a receipt. Fingerprint comparison is **REAL**;
+injectivity is **Conjecture 2 — ROADMAP, NOT proven** (`Lutar/Materials/PDDInjective.lean`).
+**certify**: POST `{empirical_risk,kl,n,delta}` or `{family}` (`intermetallics`/`oxides`/
+`refractory_hea`); returns the McAllester bound `R(Q) ≤ R̂(Q) + sqrt((KL+ln(2√n/δ))/(2n))`.
+Formula **proven on paper**, computation **exact**; **Lean proof is an open SORRY/ROADMAP**
+(`Lutar/Materials/PACBayesMaterials.lean`) — not in locked-8. Presets are `SAMPLE/MODELED`.
+
+### `GET /assurance/evidence-pack`
+Returns an envelope `{pack, pack_sha3_256, digest_alg:"sha3_256", digest_canonicalization,
+offline_verify, signature}`. The `pack` bundles the assurance matrix, Khipu organ chain heads,
+lake health, doctrine block, and cosign public key. Recompute `sha3_256` over the canonicalised
+`pack` to verify offline (zero round-trip). `signature.signed:false` /`DSSE_PLACEHOLDER` when no
+runtime signing key — **honest-unsigned**; the self-digest is always recomputable.
+
+### Conformal prediction (cross-cutting)
+`/govern/infer` (and forecast/RAG surfaces) embed a **split-conformal** block: calibration split,
+nonconformity score `|Λ−y|`, finite-sample quantile `q̂`, and a prediction interval with
+**marginal coverage ≥ 1−α** (distribution-free, under exchangeability). NOT Hoeffding, NOT a
+Bayesian posterior, NOT conditional coverage. Refs: Vovk 1999; Angelopoulos & Bates 2021
+(arXiv:2107.07511). Labelled `CP-90 SAMPLE` until `n_real ≥ 500` real outcomes upgrade it to
+MEASURED.
+
+---
+
 ## Errors
 
 Standard HTTP semantics: `200` success, `400` malformed request, `403` blocked by policy gate (body
