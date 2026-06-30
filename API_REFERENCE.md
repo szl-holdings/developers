@@ -173,6 +173,67 @@ Bayesian posterior, NOT conditional coverage. Refs: Vovk 1999; Angelopoulos & Ba
 (arXiv:2107.07511). Labelled `CP-90 SAMPLE` until `n_real ≥ 500` real outcomes upgrade it to
 MEASURED.
 
+
+---
+
+## a11oy governance, provenance & lake endpoints
+
+Live endpoints newly surfaced (all verified `200` at `https://a-11-oy.com`, 2026-06-30). Base: `https://a-11-oy.com` (same as `https://szlholdings-a11oy.hf.space`).
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/a11oy/v1/honest` | Full doctrine status: `doctrine_lock` (v11, 749/14/163, `c7c0ba17`), 8 locked-proven IDs, Λ advisory, persistence note. The canonical machine-readable "what we claim" endpoint. |
+| GET | `/api/a11oy/v1/signing-status` | Receipt signing posture: `key_source` (`ephemeral` or `persistent`), `dsse_keyid`, `hmac_layer` status, `non_repudiation` flag, honest note. Set `A11OY_RECEIPT_KEY_PATH` + `A11OY_HMAC_KEY` as Space secrets for persistent non-repudiation. |
+| GET | `/api/a11oy/v1/frontier/manifest` | Live roll-up of all 8 frontier capabilities as tiles, each with `MEASURED`/`MODELED`/`ROADMAP`/`SAMPLE`/`UNAVAILABLE` label. Includes `universal_verifier` address, `labels_legend`, `summary` (`tiles:8`, `label_counts`), and a per-capability `capabilities[]` array. |
+| GET | `/api/a11oy/v1/energy/ledger` | Hash-chained NVML joule receipt chain. Returns `chain_length`, `links_intact`, `persistence` note. `chain_length:0` is correct when no sovereign GPU job ran this process — honest, not an error. |
+| GET | `/api/a11oy/v1/energy/sci` | Software Carbon Intensity score (GSF SCI / ISO 21031:2024). Returns `label` (`UNAVAILABLE` when no NVML), `sci_score_gco2_per_call`, `grid_intensity_gco2_per_kwh` (MODELED, EPA eGRID 2023 default; set `ELECTRICITY_MAPS_API_KEY` for MEASURED), and `meter_reachable` flag. Energy never fabricated. |
+| GET | `/api/a11oy/v1/verify/intoto` | In-toto verification guide: describes how to verify a Khipu receipt as an in-toto Statement, with `fetch_endpoint` pointer to `/khipu/intoto/<receipt_id>`. |
+| GET | `/khipu/intoto/{receipt_id}` | Fetch a receipt by ID as an in-toto Statement v1 envelope. Returns `404` for unknown IDs (correct — honest). Use a real `receipt_id` from `/api/a11oy/v1/ledger`. |
+| GET | `/api/lake/v1/log` | szl-lake Merkle log head: `log_id`, `tree_size`, `root_hash`, `honest_label` (`"self-hosted SZL Merkle log; NOT Sigstore Rekor"`), `seed_count`. Recompute `root_hash` offline to verify integrity. |
+
+### `GET /api/a11oy/v1/honest` — example response (abbreviated)
+```json
+{
+  "doctrine_lock": {
+    "doctrine": "v11", "state": "LOCKED",
+    "declarations": 749, "axioms": 14, "sorries": 163,
+    "commit": "c7c0ba17", "lambda": "Conjecture 1",
+    "locked_formula_count": 8,
+    "locked_formula_ids": ["F1","F4","F7","F11","F12","F18","F19","F22"]
+  },
+  "honest_labels": { "persistence": "Khipu receipts persist via backend=sqlite (durable=True)" }
+}
+```
+
+### `GET /api/a11oy/v1/signing-status` — example response
+```json
+{
+  "key_source": "ephemeral",
+  "key_persistent": false,
+  "dsse_keyid": "dc4ddfdb0969ef86",
+  "hmac_layer": "placeholder",
+  "non_repudiation": false,
+  "doctrine": "v11",
+  "honesty": "PARTIAL -- ECDSA-P256 key is ephemeral; HMAC layer is placeholder. Set A11OY_RECEIPT_KEY_PATH/DIR and A11OY_HMAC_KEY as HF Space secrets for full non-repudiation."
+}
+```
+
+### `GET /api/lake/v1/log` — example response
+```json
+{
+  "log_id": "szl-lake-merkle-v1",
+  "tree_size": 5,
+  "root_hash": "01077a19a40ea1ca19c50533308aba6fb089c824bd6615ba9a39563f58825883",
+  "honest_label": "self-hosted SZL Merkle log; NOT Sigstore Rekor",
+  "seed_count": 0
+}
+```
+
+**Honesty note on `/api/lake/v1/log`:** `tree_size` reflects the in-process Merkle log state; the persistent
+`szl-lake` HF dataset receipt chain may lag (see szl-lake sync gap in FRONTIER_VISION). Both sources are
+independently verifiable — recompute `root_hash` offline over the leaf list.
+
+
 ---
 
 ## Errors
@@ -200,3 +261,5 @@ contract is stable.
   gate enforced inside a11oy's Λ-gate router.
 
 *Signed Yachay `<yachay@szlholdings.dev>` · Co-Authored-By: Perplexity Computer Agent · Apache-2.0*
+
+*Signed-off-by: Stephen Lutar <stephenlutar2@gmail.com> (DCO) — Dev D wiring pass 2026-06-30*
