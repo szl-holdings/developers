@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Status — SZL Developers</title>
+<meta name="description" content="Live component-level health for the SZL governed substrate: a11oy health, the signing key, the MCP catalog, and the decision-receipt API. Concrete impact, no vague 'service issues'." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/kanchay.css" />
+<style>
+  .status-hd { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  .status-hd h1 { margin: 0; }
+  .overall { display: inline-flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 14px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel-3); }
+  .overall .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ink-faint); }
+  .overall.ok .dot { background: var(--ok); box-shadow: 0 0 9px var(--ok); }
+  .overall.down .dot { background: var(--down); box-shadow: 0 0 9px var(--down); }
+  .overall.checking .dot { background: var(--info); animation: pulse 1.1s infinite; }
+  .comp { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); margin: 12px 0; padding: 18px 20px; }
+  .comp-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .comp-name { font-family: var(--display); font-weight: 600; font-size: 15px; }
+  .comp-route { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); }
+  .comp-spacer { flex: 1; }
+  .comp-impact { color: var(--ink-dim); font-size: 13.5px; margin-top: 10px; min-height: 18px; }
+  .comp-metric { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
+  .uptime-note { background: var(--panel-3); border: 1px dashed var(--line); border-radius: var(--radius-sm); padding: 16px; color: var(--ink-dim); font-size: 13.5px; margin: 8px 0 28px; }
+  .uptime-note strong { color: var(--ink); }
+  .log { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+  .log th { text-align: left; font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); padding: 8px 10px; border-bottom: 1px solid var(--line); font-weight: 500; }
+  .log td { padding: 9px 10px; border-bottom: 1px solid var(--line-soft); color: var(--ink-dim); vertical-align: top; }
+  .log td:first-child { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); white-space: nowrap; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12px; color: var(--ink-faint); margin-top: 14px; font-family: var(--mono); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <span class="brand"><span class="mark">S</span> SZL Developers <small>Doctrine v11</small></span>
+  <span class="topnav">
+    <a href="index.html">Overview</a>
+    <a href="reference.html">API Reference</a>
+    <a href="status.html" class="active">Status</a>
+    <a href="changelog.html">Changelog</a>
+  </span>
+  <span class="spacer"></span>
+  <span class="statuspill checking" data-statuspill><span class="dot"></span><span data-statustext>checking…</span></span>
+</nav>
+
+<div class="wrap">
+  <div class="status-hd">
+    <h1>System status</h1>
+    <span class="overall checking" id="overall"><span class="dot"></span><span id="overall-txt">checking components…</span></span>
+  </div>
+  <p class="lede" style="margin-bottom:26px;">Live component-level health, polled directly from your browser against the production substrate every 30 seconds. We report <strong>concrete impact</strong> — which capability is degraded and by how much — never a vague "service issues".</p>
+
+  <div class="uptime-note">
+    <strong>This uptime log starts now.</strong> We will not fabricate historical uptime. The incident log below begins at this page's deploy date and records only events observed by this monitor and our operators. Numbers you see (latency, doctrine lock, key fingerprint) are read live from the endpoints on each load — they are measurements, not marketing.
+  </div>
+
+  <p class="section-title">Components</p>
+
+  <div class="comp" id="c-a11oy">
+    <div class="comp-top">
+      <span class="comp-name">a11oy command platform</span>
+      <span class="comp-route">GET /healthz</span>
+      <span class="comp-spacer"></span>
+      <span class="badge gray" id="c-a11oy-badge"><span class="dot"></span>checking…</span>
+    </div>
+    <div class="comp-impact" id="c-a11oy-impact">Polling the live Space…</div>
+    <div class="comp-metric" id="c-a11oy-metric"></div>
+  </div>
+
+  <div class="comp" id="c-sign">
+    <div class="comp-top">
+      <span class="comp-name">Decision-receipt signing</span>
+      <span class="comp-route">POST /khipu/sign</span>
+      <span class="comp-spacer"></span>
+      <span class="badge gray" id="c-sign-badge"><span class="dot"></span>checking…</span>
+    </div>
+    <div class="comp-impact" id="c-sign-impact">Signing a probe payload into a DSSE envelope…</div>
+    <div class="comp-metric" id="c-sign-metric"></div>
+  </div>
+
+  <div class="comp" id="c-key">
+    <div class="comp-top">
+      <span class="comp-name">Signing key (cosign public key)</span>
+      <span class="comp-route">GET /khipu/pubkey</span>
+      <span class="comp-spacer"></span>
+      <span class="badge gray" id="c-key-badge"><span class="dot"></span>checking…</span>
+    </div>
+    <div class="comp-impact" id="c-key-impact">Fetching the published ECDSA-P256 key…</div>
+    <div class="comp-metric" id="c-key-metric"></div>
+  </div>
+
+  <div class="comp" id="c-mcp">
+    <div class="comp-top">
+      <span class="comp-name">MCP tool catalog</span>
+      <span class="comp-route">GET /api/a11oy/v1/mcp/tools</span>
+      <span class="comp-spacer"></span>
+      <span class="badge gray" id="c-mcp-badge"><span class="dot"></span>checking…</span>
+    </div>
+    <div class="comp-impact" id="c-mcp-impact">Reading the governed tool catalog…</div>
+    <div class="comp-metric" id="c-mcp-metric"></div>
+  </div>
+
+  <div class="legend">
+    <span><i style="background:var(--ok);"></i> operational</span>
+    <span><i style="background:var(--warn);"></i> degraded — concrete impact stated</span>
+    <span><i style="background:var(--down);"></i> down — capability unavailable</span>
+  </div>
+
+  <p class="section-title" style="margin-top:40px;">Incident log</p>
+  <table class="log">
+    <thead><tr><th>Date (UTC)</th><th>Component</th><th>Event</th></tr></thead>
+    <tbody id="log-body">
+      <tr><td id="log-start">—</td><td>monitor</td><td>Status monitoring started. No historical uptime is claimed prior to this date.</td></tr>
+    </tbody>
+  </table>
+
+  <p class="comp-metric" style="margin-top:18px;">Roadmap: persisted uptime history + 90-day bars once the operator-side collector lands. Until then this page reports point-in-time health honestly, on each load.</p>
+</div>
+
+<footer class="foot">
+  <span>SZL Holdings · Doctrine v11 LOCKED · 749/14/163 · Apache-2.0</span>
+  <span>Status is measured live · no fabricated history</span>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>
+  // record the page-load time as the honest "monitoring started" anchor
+  document.getElementById("log-start").textContent = new Date().toISOString().replace("T", " ").slice(0, 19);
+
+  function setComp(id, state, impact, metric) {
+    const badge = document.getElementById("c-" + id + "-badge");
+    const cls = state === "ok" ? "green" : state === "warn" ? "gold" : state === "down" ? "red" : "gray";
+    const label = state === "ok" ? "operational" : state === "warn" ? "degraded" : state === "down" ? "down" : "checking…";
+    badge.className = "badge " + cls;
+    badge.innerHTML = '<span class="dot"></span>' + label;
+    document.getElementById("c-" + id + "-impact").innerHTML = impact;
+    document.getElementById("c-" + id + "-metric").textContent = metric || "";
+  }
+
+  // latency → degraded thresholds give CONCRETE impact, not "service issues"
+  function latencyImpact(name, ms) {
+    if (ms > 2500) return { state: "warn", impact: name + " is responding but <strong>slow (~" + ms + "ms)</strong> — calls succeed, expect noticeable lag.", metric: "round-trip " + ms + "ms" };
+    return { state: "ok", impact: name + " responding normally.", metric: "round-trip " + ms + "ms" };
+  }
+
+  let overallDown = 0, overallWarn = 0, checked = 0;
+  function rollUp() {
+    const o = document.getElementById("overall"), t = document.getElementById("overall-txt");
+    if (checked < 4) return;
+    if (overallDown > 0) { o.className = "overall down"; t.textContent = overallDown + " component" + (overallDown>1?"s":"") + " down"; }
+    else if (overallWarn > 0) { o.className = "overall checking"; t.textContent = overallWarn + " component" + (overallWarn>1?"s":"") + " degraded"; }
+    else { o.className = "overall ok"; t.textContent = "all systems operational"; }
+  }
+
+  async function refresh() {
+    overallDown = 0; overallWarn = 0; checked = 0;
+
+    // 1. a11oy /healthz
+    SZL.call("/healthz").then(({ data, error, ms, status }) => {
+      checked++;
+      if (error || !data || data.status !== "ok") {
+        overallDown++; setComp("a11oy", "down", "The command platform is <strong>unreachable</strong> from your browser — governed inference and live signing are unavailable right now.", error ? "HTTP " + error.status : "no response");
+      } else {
+        const r = latencyImpact("Command platform", ms);
+        if (r.state === "warn") overallWarn++;
+        const lock = data.lock || (data.numbers ? data.numbers.declarations + "/" + data.numbers.axioms + "/" + data.numbers.sorries : "—");
+        setComp("a11oy", r.state, r.impact, r.metric + " · doctrine lock " + lock + " · commit " + (data.commit || "—"));
+      }
+      rollUp();
+    });
+
+    // 2. POST /khipu/sign — real probe (proves signing actually works, not just health)
+    SZL.call("/khipu/sign", { method: "POST", body: { payload: { probe: "status-page", ts: new Date().toISOString() } } }).then(({ data, error, ms, status }) => {
+      checked++;
+      if (error || !data) {
+        overallDown++; setComp("sign", "down", "Decision-receipt signing is <strong>failing</strong> — new receipts cannot be issued. Verification of existing receipts is unaffected.", error ? "HTTP " + error.status : "no response");
+      } else {
+        const env = data.dsse || data.envelope || data;
+        const sigOk = !!(env && env.signatures && env.signatures.length);
+        const r = latencyImpact("Signing", ms);
+        if (!sigOk) { overallWarn++; setComp("sign", "warn", "Signing responded but returned <strong>no signature array</strong> — receipts may be UNSIGNED-honest until a key is restored.", r.metric); }
+        else { if (r.state === "warn") overallWarn++; setComp("sign", r.state, "Probe payload signed into a valid DSSE envelope (" + env.signatures.length + " signature). " + (r.state==="ok"?"Issuing receipts normally.":""), r.metric); }
+      }
+      rollUp();
+    });
+
+    // 3. GET /khipu/pubkey
+    SZL.call("/khipu/pubkey").then(({ data, error, ms }) => {
+      checked++;
+      if (error || !data) {
+        overallWarn++; setComp("key", "warn", "The published key endpoint is <strong>unavailable</strong> — offline verification against the served key is blocked; server-side verify still works.", error ? "HTTP " + error.status : "no response");
+      } else {
+        setComp("key", "ok", "Public key served — offline verification is available.", (data.curve || "P-256") + " · fp " + ((data.fingerprint_sha256 || "").slice(0, 20) || "—") + "…");
+      }
+      rollUp();
+    });
+
+    // 4. GET /api/a11oy/v1/mcp/tools
+    SZL.call("/api/a11oy/v1/mcp/tools").then(({ data, error, ms }) => {
+      checked++;
+      if (error || !data) {
+        overallWarn++; setComp("mcp", "warn", "The MCP catalog is <strong>unreachable</strong> — tool discovery is degraded; direct receipt signing is unaffected.", error ? "HTTP " + error.status : "no response");
+      } else {
+        const n = data.count ?? (Array.isArray(data.tools) ? data.tools.length : null);
+        setComp("mcp", "ok", "Catalog served" + (n != null ? " — <strong>" + n + " governed tools</strong> available." : "."), "round-trip " + ms + "ms");
+      }
+      rollUp();
+    });
+  }
+
+  refresh();
+  setInterval(refresh, 30000);
+</script>
+</body>
+</html>

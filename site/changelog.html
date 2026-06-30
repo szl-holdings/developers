@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Changelog — SZL Developers</title>
+<meta name="description" content="What's new on the SZL governed substrate — user-benefit headlines for every change to the decision-receipt API, the runner, and the trust surface." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/kanchay.css" />
+<style>
+  .cl { max-width: 820px; margin: 0 auto; }
+  .entry { display: grid; grid-template-columns: 160px minmax(0,1fr); gap: 28px; padding: 30px 0; border-bottom: 1px solid var(--line); }
+  .entry .when { font-family: var(--mono); font-size: 12.5px; color: var(--ink-faint); padding-top: 4px; }
+  .entry .when .ver { display: inline-block; margin-top: 8px; }
+  .entry h2 { font-family: var(--display); font-weight: 600; font-size: 21px; margin: 0 0 10px; letter-spacing: -.01em; line-height: 1.2; }
+  .entry p { color: var(--ink-dim); font-size: 14.5px; margin: 0 0 12px; }
+  .entry ul { margin: 10px 0 0; padding-left: 18px; color: var(--ink-dim); font-size: 14px; }
+  .entry li { margin: 6px 0; }
+  .entry li code { font-size: .88em; }
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  @media (max-width: 760px) { .entry { grid-template-columns: 1fr; gap: 8px; } .entry .when { display: flex; gap: 12px; align-items: center; } .entry .when .ver { margin-top: 0; } }
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <span class="brand"><span class="mark">S</span> SZL Developers <small>Doctrine v11</small></span>
+  <span class="topnav">
+    <a href="index.html">Overview</a>
+    <a href="reference.html">API Reference</a>
+    <a href="status.html">Status</a>
+    <a href="changelog.html" class="active">Changelog</a>
+  </span>
+  <span class="spacer"></span>
+  <span class="statuspill checking" data-statuspill><span class="dot"></span><span data-statustext>checking…</span></span>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">What's new</p>
+    <h1>Changelog</h1>
+    <p class="lede">Every change to the decision-receipt API, the inline runner, and the trust surface — written as the benefit you get, not the commit we made.</p>
+  </header>
+
+  <div class="cl">
+
+    <div class="entry">
+      <div class="when">2026-06-30<span class="badge gray ver"><span class="dot"></span>dev surface v1</span></div>
+      <div>
+        <h2>You can now sign and verify a decision receipt in your browser — no SDK, no key</h2>
+        <p>The new developer surface ships a Stripe-style 3-column API reference with a <strong>live runner</strong> built into the page. Paste a decision, click sign, get a real DSSE envelope back from the production endpoint, then verify it — typically in under a minute.</p>
+        <ul>
+          <li>Inline runner calls <code class="inline">POST /khipu/sign</code> then <code class="inline">POST /khipu/verify</code> against the live Space, cross-origin, with optimistic "signing…" feedback.</li>
+          <li>Every fetch uses a <code class="inline">{ data, error }</code> wrapper — a non-2xx never throws, it shows you the status and the gate <code class="inline">reasons</code>.</li>
+          <li>Copy-paste <code class="inline">curl</code> for the same calls, so the page and your terminal stay in sync.</li>
+        </ul>
+        <div class="tags">
+          <span class="badge green"><span class="dot"></span>API REFERENCE</span>
+          <span class="badge blue"><span class="dot"></span>RUNNER</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="when">2026-06-30<span class="badge gray ver"><span class="dot"></span>status v1</span></div>
+      <div>
+        <h2>You can see exactly what's degraded — concrete impact, never "service issues"</h2>
+        <p>The new public status page polls each component live and tells you the <strong>specific capability</strong> affected and by how much, e.g. "signing is responding but slow (~2.8s)" instead of a vague banner.</p>
+        <ul>
+          <li>Four components probed live: command platform (<code class="inline">/healthz</code>), signing (<code class="inline">/khipu/sign</code>), the public key (<code class="inline">/khipu/pubkey</code>), and the MCP catalog.</li>
+          <li>Signing health is a <em>real signing probe</em>, not just a ping — it confirms a valid DSSE envelope comes back.</li>
+          <li>Honest by design: the uptime log <strong>starts at deploy</strong>. We do not fabricate historical uptime.</li>
+        </ul>
+        <div class="tags">
+          <span class="badge green"><span class="dot"></span>STATUS</span>
+          <span class="badge gold"><span class="dot"></span>HONEST UPTIME</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="when">2026-06-30<span class="badge gray ver"><span class="dot"></span>dashboard v1</span></div>
+      <div>
+        <h2>Attestation status now follows you across every page — in the tab and the favicon</h2>
+        <p>The dark-mode-first dashboard reflects live substrate health everywhere: the top-bar pill, the browser tab title, and a generated favicon dot all turn green when a11oy is live and red when it isn't — so you know the substrate's state without leaving the page you're on.</p>
+        <ul>
+          <li>Live cards read the real doctrine lock (<code class="inline">749 / 14 / 163</code>) and the served key fingerprint, not hard-coded copy.</li>
+          <li>Empty states show the <em>exact command</em> to run, not a decorative blank.</li>
+        </ul>
+        <div class="tags">
+          <span class="badge blue"><span class="dot"></span>DASHBOARD</span>
+          <span class="badge green"><span class="dot"></span>STATUS EVERYWHERE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="when">2026-06-30<span class="badge gray ver"><span class="dot"></span>doctrine v11</span></div>
+      <div>
+        <h2>The honesty boundary is stated up front — what's proven vs. what's open</h2>
+        <p>Every surface draws a clear line: <strong>8 PURIQ formulas are locked-proven</strong> in Lean 4, and <strong>Λ-uniqueness is Conjecture 1 — an open bounty, not a theorem</strong>. We label the conjecture as open everywhere it appears.</p>
+        <ul>
+          <li>Locked-proven: {F1, F4, F7, F11, F12, F18, F19, F22}, kernel-clean at <code class="inline">c7c0ba17</code>.</li>
+          <li>Theorem U is a proven <em>conditional</em> on Conjecture 1 — stated as such, never as a closed result.</li>
+          <li>Service images are SLSA Build L1 (honest); L2 verified-provenance is roadmap, L3 is not claimed.</li>
+        </ul>
+        <div class="tags">
+          <span class="badge green"><span class="dot"></span>THEOREM-BACKED · 8 LOCKED</span>
+          <span class="badge gold"><span class="dot"></span>CONJECTURE 1 · OPEN</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="foot">
+  <span>SZL Holdings · Doctrine v11 LOCKED · 749/14/163 · Apache-2.0</span>
+  <span>Λ = Conjecture 1 (open) · 8 locked-proven formulas</span>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

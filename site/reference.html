@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>API Reference — SZL Developers</title>
+<meta name="description" content="SZL decision-receipt API: sign a decision into a DSSE envelope and verify it, runnable inline against the live a11oy endpoint." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/kanchay.css" />
+<style>
+  /* Stripe 3-column: sidebar nav · content · interactive runner */
+  .ref { display: grid; grid-template-columns: 220px minmax(0,1fr) 420px; gap: 0; max-width: 1320px; margin: 0 auto; }
+  .ref-nav { position: sticky; top: 56px; align-self: start; height: calc(100vh - 56px); overflow-y: auto; padding: 28px 18px 40px; border-right: 1px solid var(--line); }
+  .ref-nav .grp { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); margin: 20px 0 8px; }
+  .ref-nav a { display: block; color: var(--ink-dim); font-size: 13.5px; padding: 5px 10px; border-radius: 6px; }
+  .ref-nav a:hover { color: var(--ink); background: var(--panel-2); text-decoration: none; }
+  .ref-nav a.active { color: var(--proof); background: rgba(58,244,200,.08); }
+  .ref-main { padding: 34px 34px 96px; min-width: 0; }
+  .ref-run { position: sticky; top: 56px; align-self: start; height: calc(100vh - 56px); overflow-y: auto; padding: 28px 24px 40px; border-left: 1px solid var(--line); background: var(--panel-3); }
+  .ep { border-bottom: 1px solid var(--line); padding: 26px 0; }
+  .ep:first-of-type { padding-top: 8px; }
+  .ep .sig { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 14px; margin-bottom: 8px; flex-wrap: wrap; }
+  .ep .sig .path { color: var(--ink); }
+  .ep p { color: var(--ink-dim); font-size: 14px; }
+  .params { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .params td { padding: 7px 10px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  .params td:first-child { font-family: var(--mono); color: var(--lattice); white-space: nowrap; }
+  .params td:nth-child(2) { font-family: var(--mono); color: var(--ink-faint); font-size: 12px; }
+  .params td:last-child { color: var(--ink-dim); }
+  .runner-label { font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 14px; }
+  .runner textarea { width: 100%; min-height: 96px; background: var(--void); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: var(--mono); font-size: 12.5px; padding: 11px; resize: vertical; }
+  .runner .step { margin: 16px 0 6px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--proof); }
+  .runner .out { min-height: 30px; }
+  .runner .meta { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); margin: 6px 0; }
+  .ticker { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); display: flex; align-items: center; gap: 8px; }
+  .ticker .spin { width: 9px; height: 9px; border-radius: 50%; background: var(--info); animation: pulse 1s infinite; }
+  @media (max-width: 1100px) { .ref { grid-template-columns: 1fr; } .ref-nav, .ref-run { position: static; height: auto; border: none; } .ref-run { border-top: 1px solid var(--line); } }
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <span class="brand"><span class="mark">S</span> SZL Developers <small>Doctrine v11</small></span>
+  <span class="topnav">
+    <a href="index.html">Overview</a>
+    <a href="reference.html" class="active">API Reference</a>
+    <a href="status.html">Status</a>
+    <a href="changelog.html">Changelog</a>
+  </span>
+  <span class="spacer"></span>
+  <span class="statuspill checking" data-statuspill><span class="dot"></span><span data-statustext>checking…</span></span>
+</nav>
+
+<div class="ref">
+  <!-- column 1: nav -->
+  <aside class="ref-nav">
+    <div class="grp">Getting started</div>
+    <a href="#quickstart" class="active">Quickstart</a>
+    <a href="#auth">Authentication</a>
+    <div class="grp">Decision receipts</div>
+    <a href="#sign">Sign a decision</a>
+    <a href="#verify">Verify a receipt</a>
+    <a href="#pubkey">Public key</a>
+    <div class="grp">Governance</div>
+    <a href="#govern">Governed inference</a>
+    <a href="#mcp">MCP tool catalog</a>
+    <div class="grp">Reference</div>
+    <a href="#errors">Errors</a>
+  </aside>
+
+  <!-- column 2: content -->
+  <main class="ref-main">
+    <p class="eyebrow" id="quickstart">Decision-receipt API · base https://szlholdings-a11oy.hf.space</p>
+    <h1>API Reference</h1>
+    <p class="lede">Predictable REST. JSON in, JSON out, standard HTTP codes. The receipt primitive is a DSSE envelope signed with ECDSA-P256-SHA256 — verifiable with <code class="inline">cosign verify-blob</code> or the <code class="inline">/khipu/verify</code> endpoint. No API key needed for the demo surface.</p>
+
+    <div class="emptycmd" style="margin-top:20px;">
+      <strong>Under 5 minutes, no key:</strong> sign a decision in the runner on the right →, get a DSSE envelope back, then verify it. Or from your terminal:
+      <div class="cmd"><code class="inline" id="qs-curl">curl -s https://szlholdings-a11oy.hf.space/khipu/sign -H 'Content-Type: application/json' -d '{"payload":{"decision":"allow","subject":"demo-001"}}'</code><button class="btn ghost" data-copy="#qs-curl">Copy</button></div>
+    </div>
+
+    <h2 id="auth">Authentication</h2>
+    <p>The public demo endpoints on this page require <strong>no API key</strong> — they are rate-limited but open, so you can verify the substrate before signing up. Commercial usage is metered with keys issued by the customer portal; pass the key as <code class="inline">Authorization: Bearer &lt;key&gt;</code> when you have one. Responses follow the <code class="inline">{ data, error }</code> shape: a non-2xx never throws, it returns an <code class="inline">error</code> object with the status and the gate <code class="inline">reasons</code>.</p>
+
+    <div class="ep" id="sign">
+      <div class="sig"><span class="method post">POST</span> <span class="path">/khipu/sign</span> <span class="badge green"><span class="dot"></span>LIVE</span></div>
+      <p>Sign a JSON <code class="inline">payload</code> into a DSSE envelope. This is your decision receipt: a base64 <code class="inline">payload</code>, a <code class="inline">payloadType</code>, and an ECDSA-P256-SHA256 <code class="inline">signatures</code> array. The server stamps the live doctrine numbers and an <code class="inline">issued_at</code>.</p>
+      <table class="params">
+        <tr><td>payload</td><td>object</td><td>Any JSON you want notarized — the decision, subject, actor, and context.</td></tr>
+      </table>
+      <pre><span class="c-com"># request body</span>
+{ <span class="c-key">"payload"</span>: { <span class="c-key">"decision"</span>: <span class="c-str">"allow"</span>, <span class="c-key">"subject"</span>: <span class="c-str">"demo-001"</span>, <span class="c-key">"actor"</span>: <span class="c-str">"you"</span> } }</pre>
+      <p style="margin-top:10px;">Try it live in the runner on the right. →</p>
+    </div>
+
+    <div class="ep" id="verify">
+      <div class="sig"><span class="method post">POST</span> <span class="path">/khipu/verify</span> <span class="badge green"><span class="dot"></span>LIVE</span></div>
+      <p>Verify a DSSE envelope. Returns <code class="inline">verified</code>, <code class="inline">keyid_match</code>, and the recomputed <code class="inline">pae_digest</code>. Flip a byte in the payload and verification fails — that is the whole point.</p>
+      <pre><span class="c-com"># response</span>
+{ <span class="c-key">"verified"</span>: <span class="c-num">true</span>, <span class="c-key">"keyid_match"</span>: <span class="c-num">true</span>, <span class="c-key">"pae_digest"</span>: <span class="c-str">"cafff73e…"</span> }</pre>
+    </div>
+
+    <div class="ep" id="pubkey">
+      <div class="sig"><span class="method get">GET</span> <span class="path">/khipu/pubkey</span> <span class="badge green"><span class="dot"></span>LIVE</span></div>
+      <p>The published cosign public key (PEM), its <code class="inline">fingerprint_sha256</code>, <code class="inline">keyid</code>, and curve. Verify receipts <em>offline</em> against this key — zero round-trip, zero trust in this server.</p>
+    </div>
+
+    <div class="ep" id="govern">
+      <div class="sig"><span class="method post">POST</span> <span class="path">/api/a11oy/v1/govern/infer</span> <span class="badge green"><span class="dot"></span>LIVE</span></div>
+      <p>Governed inference: model routing + Λ-gate + a split-conformal coverage block + a signed receipt. Returns <code class="inline">decision</code> (<code class="inline">allow</code>/<code class="inline">block</code>), an <code class="inline">answer</code>, a <code class="inline">governance</code> block (Λ advisory, capped ≤ 0.99 — <strong>advisory, never a theorem</strong>), and the doctrine block.</p>
+      <table class="params">
+        <tr><td>prompt</td><td>string</td><td>The request to govern and answer.</td></tr>
+      </table>
+      <pre>{ <span class="c-key">"prompt"</span>: <span class="c-str">"summarize the incident report"</span> }</pre>
+    </div>
+
+    <div class="ep" id="mcp">
+      <div class="sig"><span class="method get">GET</span> <span class="path">/api/a11oy/v1/mcp/tools</span> <span class="badge green"><span class="dot"></span>LIVE</span></div>
+      <p>The canonical live MCP surface: a JSON catalog of governed tools (<span id="mcp-count">several</span> today, served live). Invoke one with <code class="inline">POST /api/a11oy/v1/mcp/call</code>. The Streamable-HTTP JSON-RPC transport at <code class="inline">/mcp/</code> is <span class="badge gold"><span class="dot"></span>ROADMAP</span> — use this REST surface today.</p>
+    </div>
+
+    <h2 id="errors">Errors</h2>
+    <p>Standard HTTP semantics: <code class="inline">200</code> success, <code class="inline">400</code> malformed, <code class="inline">403</code> blocked by the policy gate (body includes <code class="inline">reasons</code>), <code class="inline">404</code> unknown route, <code class="inline">429</code> quota exceeded, <code class="inline">5xx</code> server error. Governed responses carry a signed (or honestly <code class="inline">UNSIGNED</code>) receipt where applicable.</p>
+  </main>
+
+  <!-- column 3: interactive runner (Stripe inline runner + Resend {data,error} + optimistic UI) -->
+  <aside class="ref-run">
+    <div class="runner">
+      <div class="runner-label">Run it · live</div>
+      <p class="meta">Hits <code class="inline" style="font-size:.85em;">szlholdings-a11oy.hf.space</code> directly from your browser. No key, no setup.</p>
+
+      <div class="step">1 · decision payload</div>
+      <textarea id="payload">{
+  "decision": "allow",
+  "subject": "demo-decision-001",
+  "actor": "developer-quickstart",
+  "policy": "Lambda-gate"
+}</textarea>
+      <button class="btn primary" id="btn-sign" style="margin-top:10px; width:100%;">Sign decision → DSSE envelope</button>
+      <div class="meta" id="sign-meta"></div>
+      <div class="out" id="sign-out"></div>
+
+      <div class="step">2 · verify the receipt</div>
+      <button class="btn ghost" id="btn-verify" style="width:100%;" disabled>Verify envelope</button>
+      <div class="meta" id="verify-meta"></div>
+      <div class="out" id="verify-out"></div>
+    </div>
+  </aside>
+</div>
+
+<footer class="foot">
+  <span>SZL Holdings · Doctrine v11 LOCKED · 749/14/163 · Apache-2.0</span>
+  <span>Λ = Conjecture 1 (open) · 8 locked-proven formulas</span>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>
+  document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+    navigator.clipboard?.writeText(document.querySelector(b.dataset.copy).textContent);
+    const o = b.textContent; b.textContent = "Copied"; setTimeout(() => b.textContent = o, 1200);
+  }));
+
+  // live MCP tool count (honest: reads the real catalog)
+  SZL.call("/api/a11oy/v1/mcp/tools").then(({ data }) => {
+    if (data && data.count) document.getElementById("mcp-count").textContent = data.count + " governed tools";
+  });
+
+  let lastEnvelope = null;
+  const signBtn = document.getElementById("btn-sign");
+  const verifyBtn = document.getElementById("btn-verify");
+
+  signBtn.addEventListener("click", async () => {
+    let payload;
+    try { payload = JSON.parse(document.getElementById("payload").value); }
+    catch { document.getElementById("sign-out").innerHTML = '<span class="badge red"><span class="dot"></span>invalid JSON</span>'; return; }
+
+    // optimistic UI (F8): show "signing…" immediately
+    signBtn.disabled = true;
+    document.getElementById("sign-meta").innerHTML = '<span class="ticker"><span class="spin"></span>signing… ECDSA-P256 over DSSE PAE</span>';
+    document.getElementById("sign-out").innerHTML = "";
+
+    const { data, error, status, ms } = await SZL.call("/khipu/sign", { method: "POST", body: { payload } });
+    signBtn.disabled = false;
+    if (error) {
+      document.getElementById("sign-meta").innerHTML = '<span class="badge red"><span class="dot"></span>HTTP ' + status + '</span>';
+      document.getElementById("sign-out").innerHTML = '<pre>' + SZL.hjson(error.body) + '</pre>';
+      return;
+    }
+    lastEnvelope = data.dsse || data.envelope;
+    document.getElementById("sign-meta").innerHTML = '<span class="badge green"><span class="dot"></span>✓ signed · HTTP ' + status + ' · ' + ms + 'ms</span>';
+    document.getElementById("sign-out").innerHTML = '<pre>' + SZL.hjson({
+      payloadType: lastEnvelope.payloadType,
+      _pae_sha256: lastEnvelope._pae_sha256,
+      signatures: lastEnvelope.signatures,
+      signed: lastEnvelope.signed,
+    }) + '</pre>';
+    verifyBtn.disabled = false;
+  });
+
+  verifyBtn.addEventListener("click", async () => {
+    if (!lastEnvelope) return;
+    verifyBtn.disabled = true;
+    document.getElementById("verify-meta").innerHTML = '<span class="ticker"><span class="spin"></span>recomputing PAE + checking signature…</span>';
+    document.getElementById("verify-out").innerHTML = "";
+    const { data, error, status, ms } = await SZL.call("/khipu/verify", { method: "POST", body: lastEnvelope });
+    verifyBtn.disabled = false;
+    if (error) {
+      document.getElementById("verify-meta").innerHTML = '<span class="badge red"><span class="dot"></span>HTTP ' + status + '</span>';
+      document.getElementById("verify-out").innerHTML = '<pre>' + SZL.hjson(error.body) + '</pre>';
+      return;
+    }
+    const ok = data.verified === true;
+    document.getElementById("verify-meta").innerHTML = ok
+      ? '<span class="badge green"><span class="dot"></span>✓ verified · HTTP ' + status + ' · ' + ms + 'ms</span>'
+      : '<span class="badge red"><span class="dot"></span>NOT verified</span>';
+    document.getElementById("verify-out").innerHTML = '<pre>' + SZL.hjson({
+      verified: data.verified, keyid_match: data.keyid_match, pae_digest: data.pae_digest,
+    }) + '</pre>';
+  });
+
+  // scrollspy for the nav
+  const links = [...document.querySelectorAll(".ref-nav a")];
+  const obs = new IntersectionObserver((es) => {
+    es.forEach(e => { if (e.isIntersecting) {
+      links.forEach(l => l.classList.toggle("active", l.getAttribute("href") === "#" + e.target.id));
+    }});
+  }, { rootMargin: "-20% 0px -70% 0px" });
+  document.querySelectorAll(".ref-main [id]").forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
