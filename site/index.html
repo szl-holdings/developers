@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SZL Developers — build on the governed substrate</title>
+<meta name="description" content="Developer hub for SZL Holdings: signed decision receipts, governed inference, MCP tools. Every action signed, every decision gated, every receipt verifiable." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/kanchay.css" />
+</head>
+<body>
+<nav class="topbar">
+  <span class="brand"><span class="mark">S</span> SZL Developers <small>Doctrine v11</small></span>
+  <span class="topnav">
+    <a href="index.html" class="active">Overview</a>
+    <a href="reference.html">API Reference</a>
+    <a href="status.html">Status</a>
+    <a href="changelog.html">Changelog</a>
+  </span>
+  <span class="spacer"></span>
+  <span class="statuspill checking" data-statuspill><span class="dot"></span><span data-statustext>checking…</span></span>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Build on the governed substrate</p>
+    <h1>Every action signed.<br/>Every decision gated.<br/>Every receipt verifiable.</h1>
+    <p class="lede">Sign a decision into a DSSE envelope, verify it cryptographically, and route inference through the Λ-gate — over plain HTTP, no SDK required. The same primitive (ECDSA-P256-SHA256 over DSSE PAE) that npm, PyPI, and Kubernetes sign with, applied to AI decisions.</p>
+    <div style="display:flex; gap:12px; margin-top:22px; flex-wrap:wrap;">
+      <a class="btn primary" href="reference.html#quickstart">Sign your first receipt →</a>
+      <a class="btn ghost" href="reference.html">Read the API reference</a>
+    </div>
+  </header>
+
+  <!-- live substrate panel: status everywhere, optimistic + honest -->
+  <p class="section-title">Live substrate</p>
+  <div class="grid c3" style="margin-bottom:40px;">
+    <div class="card">
+      <div class="kicker">a11oy · command platform</div>
+      <h3 id="m-a11oy">checking…</h3>
+      <p id="m-a11oy-sub">Polling <code class="inline">/healthz</code> on the live Space.</p>
+    </div>
+    <div class="card">
+      <div class="kicker">Doctrine lock</div>
+      <h3 id="m-doctrine">— / — / —</h3>
+      <p>declarations / axioms / sorries — the exact numbers proved in Lean, served live.</p>
+    </div>
+    <div class="card">
+      <div class="kicker">Signing key</div>
+      <h3 id="m-key">checking…</h3>
+      <p>ECDSA-P256 cosign public key, fingerprint served from <code class="inline">/khipu/pubkey</code>.</p>
+    </div>
+  </div>
+
+  <p class="section-title">Start here</p>
+  <div class="grid c3">
+    <a class="card link" href="reference.html#quickstart">
+      <div class="kicker">5-minute quickstart</div>
+      <h3>Sign → verify a receipt</h3>
+      <p>POST a decision, get a DSSE envelope back, verify it — runnable inline against the live endpoint.</p>
+    </a>
+    <a class="card link" href="reference.html#govern">
+      <div class="kicker">Governed inference</div>
+      <h3>Route through the Λ-gate</h3>
+      <p>Allow / block decision, conformal coverage block, and a signed receipt on every call.</p>
+    </a>
+    <a class="card link" href="reference.html#mcp">
+      <div class="kicker">MCP surface</div>
+      <h3>Governed tool catalog</h3>
+      <p>A live REST catalog of governed tools you can invoke and audit.</p>
+    </a>
+  </div>
+
+  <!-- empty-state-as-command (Vercel pattern): show the exact command, not a decorative blank -->
+  <p class="section-title">No key yet? You don't need one for the demo</p>
+  <div class="emptycmd">
+    The public demo endpoints need <strong>no API key</strong>. Confirm the substrate is live right now:
+    <div class="cmd">
+      <code class="inline" id="curl-health">curl -s https://szlholdings-a11oy.hf.space/healthz</code>
+      <button class="btn ghost" data-copy="#curl-health">Copy</button>
+    </div>
+    <p style="margin-top:12px;">Commercial usage is metered via keys issued by the customer portal — but every primitive on this page is callable without one.</p>
+  </div>
+
+  <p class="section-title">Honesty boundary</p>
+  <div class="grid c2">
+    <div class="card">
+      <h3>What is proven</h3>
+      <p style="margin-bottom:10px;">8 locked-proven PURIQ formulas — {F1, F4, F7, F11, F12, F18, F19, F22} — kernel-clean in Lean 4 at <code class="inline">c7c0ba17</code>.</p>
+      <span class="badge green"><span class="dot"></span>THEOREM-BACKED · 8 locked</span>
+    </div>
+    <div class="card">
+      <h3>What is open</h3>
+      <p style="margin-bottom:10px;">Λ-uniqueness is <strong>Conjecture 1</strong> — an open bounty, not a theorem. Theorem U is a proven <em>conditional</em> on it. Service images are SLSA Build L1 (honest); L2 verified-provenance is roadmap, L3 not claimed.</p>
+      <span class="badge gold"><span class="dot"></span>CONJECTURE 1 · OPEN</span>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <span>SZL Holdings · Doctrine v11 LOCKED · 749/14/163 · Apache-2.0</span>
+  <span>Flagship: a11oy Command Center · a-11-oy.com</span>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>
+  // copy buttons
+  document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+    const t = document.querySelector(b.dataset.copy).textContent;
+    navigator.clipboard?.writeText(t);
+    const o = b.textContent; b.textContent = "Copied"; setTimeout(() => b.textContent = o, 1200);
+  }));
+  // reflect live health into the substrate panel (optimistic: cards say "checking…" first)
+  document.addEventListener("szl:health", (e) => {
+    const a = document.getElementById("m-a11oy"), as = document.getElementById("m-a11oy-sub"), d = document.getElementById("m-doctrine");
+    if (e.detail.ok) {
+      a.innerHTML = '<span class="badge green" style="font-size:13px;"><span class="dot"></span>LIVE</span> ' + e.detail.ms + 'ms';
+      as.innerHTML = 'Responding on <code class="inline">/healthz</code> · commit ' + (e.detail.data.commit || '—');
+      d.textContent = (e.detail.data.lock || "— / — / —").replace(/\//g, " / ");
+    } else {
+      a.innerHTML = '<span class="badge red"><span class="dot"></span>UNREACHABLE</span>';
+      as.textContent = "Could not reach the live Space from your browser just now.";
+    }
+  });
+  // signing key fingerprint (honest: shows the real served fingerprint)
+  SZL.call("/khipu/pubkey").then(({ data, error }) => {
+    const k = document.getElementById("m-key");
+    if (error || !data) { k.innerHTML = '<span class="badge gold"><span class="dot"></span>UNAVAILABLE</span>'; return; }
+    k.innerHTML = '<span class="badge green" style="font-size:12px;"><span class="dot"></span>' + (data.curve || 'P-256') + '</span>';
+    document.getElementById("m-key").nextElementSibling.innerHTML =
+      'Fingerprint <code class="inline" style="font-size:.8em;">' + (data.fingerprint_sha256 || '').slice(0, 24) + '…</code>';
+  });
+</script>
+</body>
+</html>
