@@ -1,7 +1,7 @@
 # WILLAY API Reference
 
 **Base URL:** `https://szlholdings-a11oy.hf.space/api/a11oy/v1/willay`  
-**Data label:** LIVE — routes registered, tab served at `/willay`  
+**Data label:** PARTIAL — `/willay` tab is LIVE (HTTP 200); `/api/a11oy/v1/willay/*` JSON API routes are ROADMAP (currently return HTTP 404). See [FRONTIER_VISION.md](https://github.com/szl-holdings/a11oy/blob/main/docs/SUBSTRATE_REALITY_MAP.md) for deployment status.  
 **Doctrine:** v11 LOCKED · 749/14/163 · c7c0ba17 · Λ = Conjecture 1
 
 > **"They hide the governor; we sign and show it."**
@@ -24,17 +24,22 @@ rejection.
 
 ## Endpoints
 
-| Method | Path | Description |
+> **⚠️ STATUS NOTE (verified 2026-06-30):** The `/willay` HTML tab is live and returns HTTP 200.
+> The JSON API routes (`/api/a11oy/v1/willay/*`) currently return HTTP 404 — they are ROADMAP, not yet deployed.
+> This document describes the intended API contract when routes deploy.
+> Half-state is the only unacceptable outcome: we name the gap, not paper over it.
+
+| Method | Path | Live? | Description |
 |--------|------|-------------|
-| `GET` | `/willay` | WILLAY operator tab (HTML, 0-CDN) |
-| `GET` | `/api/a11oy/v1/willay/classifiers` | Inspectable classifier set |
-| `POST` | `/api/a11oy/v1/willay/inspect` | Classify a prompt → verdict + reasons |
-| `POST` | `/api/a11oy/v1/willay/messages` | Fable-shaped gated turn |
-| `GET` | `/api/a11oy/v1/willay/receipts` | Last N signed verdict receipts |
-| `POST` | `/api/a11oy/v1/demo/thesis` | Demo endpoint — WILLAY thesis mode |
-| `POST` | `/api/a11oy/v1/demo/govern` | Demo endpoint — governed inference |
-| `POST` | `/api/a11oy/v1/verify` | Verify a signed WILLAY receipt |
-| `GET` | `/api/a11oy/v1/willay/doctrine` | Doctrine + honesty self-statement |
+| `GET` | `/willay` | **LIVE ✓** | WILLAY operator tab (HTML, 0-CDN) |
+| `GET` | `/api/a11oy/v1/willay/classifiers` | ROADMAP | Inspectable classifier set |
+| `POST` | `/api/a11oy/v1/willay/inspect` | ROADMAP | Classify a prompt → verdict + reasons |
+| `POST` | `/api/a11oy/v1/willay/messages` | ROADMAP | Fable-shaped gated turn |
+| `GET` | `/api/a11oy/v1/willay/receipts` | ROADMAP | Last N signed verdict receipts |
+| `POST` | `/api/a11oy/v1/demo/thesis` | **LIVE ✓** | Demo endpoint — WILLAY thesis mode |
+| `POST` | `/api/a11oy/v1/demo/govern` | **LIVE ✓** | Demo endpoint — governed inference |
+| `POST` | `/api/a11oy/v1/verify` | ROADMAP | Verify a signed WILLAY receipt |
+| `GET` | `/api/a11oy/v1/willay/doctrine` | ROADMAP | Doctrine + honesty self-statement |
 
 ---
 
@@ -387,3 +392,4 @@ an error — it is an intentional honesty signal.
 
 *Doctrine v11 LOCKED · 749/14/163 · c7c0ba17 · Λ = Conjecture 1 · Apache-2.0*  
 *Signed-off-by: Stephen Lutar <stephenlutar2@gmail.com>*
+
