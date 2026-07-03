@@ -12,7 +12,7 @@ Doctrine v11 · Apache-2.0.
 
 ```bash
 git clone https://github.com/szl-holdings/platform.git
-cd platform
+cd platform            # default branch: main
 
 # install one package editable
 pip install -e packages/<package-name>
@@ -24,9 +24,11 @@ pip install -e packages/wire-d -e packages/puriq-os -e packages/formula-os
 Each package ships a `pyproject.toml` with pinned dependencies, so you can pull just the substrate
 you need without taking the whole monorepo runtime.
 
-> **Honest status:** the canonical substrate set (12 packages) lands via **platform PR #279**
-> (`feat/instill-12-substrate-packages`, 108 files). Until it merges to `main`, install from that
-> branch. The `packages/` directory already contains 130+ supporting packages on `main`.
+> **Honest status:** the canonical substrate set is now on platform **`main`** — install directly
+> from `main`, no feature branch required. (The set was originally staged on
+> `feat/instill-12-substrate-packages` via PR #279; that PR was **closed unmerged**, but the
+> packages themselves shipped to `main`.) The `packages/` directory currently holds 150+ packages
+> on `main`, including every substrate package listed below.
 
 ## Core substrate packages
 
