@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-operator_command_example.py (filename kept as rosie_command_example.py to avoid breaking
-links) — Demonstrate dispatching a governed command and reading back the signed result.
+operator_command_example.py — Demonstrate dispatching a governed command and reading back
+the signed result.
 
-ROADMAP NOTE: the standalone Operator console (internal codename *rosie*, retired) is a
-roadmap role; its Space `szlholdings-rosie.hf.space` is NOT deployed (HTTP 404). The live,
-enforcing equivalent today is a11oy's Λ-gate, exercised below via the live MCP REST surface.
+ROADMAP NOTE: the standalone Operator console is a roadmap role; its standalone Space is NOT
+deployed (HTTP 404). The live, enforcing equivalent today is a11oy's Λ-gate, exercised below
+via the live MCP REST surface.
 Every action is Λ-gated; a blocked action returns the gate's reasons.
 
 Doctrine v11 · Apache-2.0 · Signed Yachay <yachay@szlholdings.dev>
