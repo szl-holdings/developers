@@ -5,8 +5,7 @@
 **Doctrine v11 LOCKED · 749/14/163 · kernel `c7c0ba17` · Λ = Conjecture 1 (not a theorem)**
 
 > **Honest scope.** Two products ship live: **a11oy** and **killinchu**. The Provenance Anchor,
-> Operator, and Policy roles (internal codenames *amaru*, *rosie*, *sentra* — retired) are
-> **roadmap**: their Spaces (`szlholdings-amaru/rosie/sentra.hf.space`) and standalone repos do
+> Operator, and Policy roles are **roadmap**: their standalone Spaces and repos do
 > **not** exist yet, so the verification commands below intentionally cover only the two live
 > products plus the shared Lean kernel and UDS bundle. Do not attempt to verify roadmap-role
 > images — they are not published.
@@ -277,7 +276,7 @@ The hash-link invariant `parent_digest = sha256(canonical_json(parent))` is enfo
 
 | Item | Status |
 |---|---|
-| Roadmap-role Spaces/images (amaru/rosie/sentra) | ❌ Not deployed — HTTP 404; do not attempt to verify |
+| Roadmap-role Spaces/images (Provenance Anchor / Operator / Policy) | ❌ Not deployed — HTTP 404; do not attempt to verify |
 | SLSA L3 | ❌ Not claimed. Requires isolated signing in a separate reusable workflow |
 | killinchu public Rekor entry | ⚠️ Private repo — GitHub Sigstore instance; no public tlog (by design, not a gap) |
 | Λ-uniqueness (unconditional) | ⚠️ Conjecture 1 — open bounty; do not claim as theorem |

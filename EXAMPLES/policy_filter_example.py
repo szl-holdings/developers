@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-policy_filter_example.py (filename kept as sentra_filter_example.py to avoid breaking
-links) — Demonstrate the policy / immune filter on a benign vs. a prompt-injection payload.
+policy_filter_example.py — Demonstrate the policy / immune filter on a benign vs. a
+prompt-injection payload.
 
-ROADMAP NOTE: the standalone Policy filter (internal codename *sentra*, retired) is a
-roadmap role; its Space `szlholdings-sentra.hf.space` is NOT deployed (HTTP 404). The live,
-enforcing equivalent today is a11oy's Λ-gate, exercised below via the live MCP REST surface.
+ROADMAP NOTE: the standalone Policy filter is a roadmap role; its standalone Space is NOT
+deployed (HTTP 404). The live, enforcing equivalent today is a11oy's Λ-gate, exercised below
+via the live MCP REST surface.
 
 Doctrine v11 · Apache-2.0 · Signed Yachay <yachay@szlholdings.dev>
 Co-Authored-By: Perplexity Computer Agent

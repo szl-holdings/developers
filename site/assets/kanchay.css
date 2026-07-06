@@ -43,7 +43,7 @@ body {
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
   line-height: 1.55;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 a { color: var(--lattice); text-decoration: none; }
 a:hover { text-decoration: underline; }

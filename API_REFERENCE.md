@@ -11,8 +11,7 @@ Two products ship live today; their Spaces are deployed and return `/healthz`:
 | a11oy | `https://szlholdings-a11oy.hf.space` | **Live** |
 | killinchu | `https://szlholdings-killinchu.hf.space` | **Live** |
 
-> The Provenance Anchor, Operator, and Policy roles (internal codenames *amaru*, *rosie*,
-> *sentra* — retired) are **roadmap**: the Spaces `szlholdings-amaru/rosie/sentra.hf.space`
+> The Provenance Anchor, Operator, and Policy roles are **roadmap**: their standalone Spaces
 > are **not deployed** (HTTP 404) and the standalone repos do not exist yet. The live policy
 > gate, memory ledger, and receipt DAG ship **inside a11oy** today (see below). The roadmap
 > route shapes are listed at the end for forward reference only — do not call them as live.
@@ -246,19 +245,16 @@ responses are accompanied by a signed receipt where applicable.
 
 ## Roadmap roles — NOT yet served (forward reference only)
 
-The following route shapes describe roadmap roles. **Their Spaces are not deployed** —
-`szlholdings-amaru/rosie/sentra.hf.space` return HTTP 404 today. The live equivalents ship
-inside a11oy. Do not call these as live endpoints; they are documented so the eventual public
-contract is stable.
+The following route shapes describe roadmap roles. **Their standalone Spaces are not deployed**
+and return HTTP 404 today. The live equivalents ship inside a11oy. Do not call these as live
+endpoints; they are documented so the eventual public contract is stable.
 
-- **Provenance Anchor** *(internal codename amaru, retired)* — memory cortex / Khipu receipt
-  ledger + DAG. Live equivalent today: a11oy `/khipu/*` and the governed memory under
-  `/api/a11oy/v2/unay/recall`.
-- **Operator** *(internal codename rosie, retired)* — aide / operator console, 16-command
-  catalog, operator-local Khipu LMDB store, Wire-C receipt stream. Roadmap.
-- **Policy** *(internal codename sentra, retired)* — cross-cutting immune system: dual-use +
-  injection filter, verdict/inspect engine, 8 named gates. Live equivalent today: the policy
-  gate enforced inside a11oy's Λ-gate router.
+- **Provenance Anchor** — memory cortex / Khipu receipt ledger + DAG. Live equivalent today:
+  a11oy `/khipu/*` and the governed memory under `/api/a11oy/v2/unay/recall`.
+- **Operator** — aide / operator console, 16-command catalog, operator-local Khipu LMDB store,
+  Wire-C receipt stream. Roadmap.
+- **Policy** — cross-cutting immune system: dual-use + injection filter, verdict/inspect engine,
+  8 named gates. Live equivalent today: the policy gate enforced inside a11oy's Λ-gate router.
 
 *Signed Yachay `<yachay@szlholdings.dev>` · Co-Authored-By: Perplexity Computer Agent · Apache-2.0*
 

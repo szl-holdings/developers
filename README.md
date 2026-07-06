@@ -29,7 +29,7 @@ locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** Service images are S
 
 ### ◇ Featured: the Holographic Estate
 
-See the frontier tier rendered as one live 3D holographic lattice — ~50 governed surfaces
+See the frontier tier rendered as one live 3D holographic lattice — 56 governed surfaces
 (frontier organs, energy, counter-UAS, governance, PINN, anatomy), each lit by a live a11oy
 endpoint. Vendored WebGL2 with optional WebGPU; **0 runtime CDN**. Every value carries its
 honesty label. Mobile-friendly.

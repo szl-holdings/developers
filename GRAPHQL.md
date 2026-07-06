@@ -3,7 +3,7 @@
 
 The **SZL GraphQL Gateway** gives you one typed endpoint over the SZL substrate — the two
 shipping flagships (a11oy, killinchu) plus the roadmap roles (Provenance Anchor, Operator,
-Policy; internal codenames *amaru*, *rosie*, *sentra* retired). Every query and mutation is signed into
+Policy). Every query and mutation is signed into
 a Khipu receipt chain — so the GraphQL surface is itself an auditable log.
 Doctrine v11 · Apache-2.0.
 
@@ -63,9 +63,9 @@ query Mesh {
 A single flagship + its signed receipts:
 
 ```graphql
-query ProvenanceAnchor {
-  # "amaru" is the retired internal codename for the Provenance Anchor role (roadmap)
-  flagship(id: "amaru") {
+query Flagship {
+  # "a11oy" ships live today; the Provenance Anchor role is roadmap
+  flagship(id: "a11oy") {
     name
     wireD { enabled keyid }
     signedReceipts { hash signedAt organ }
@@ -77,7 +77,7 @@ Sign a payload (returns a Khipu receipt):
 
 ```graphql
 mutation Sign {
-  # organ "a11oy" is live today; "rosie" (Operator role) is roadmap
+  # organ "a11oy" is live today; the Operator role is roadmap
   sign(payload: { action: "demo", note: "hello mesh" }, organ: "a11oy") {
     hash prevHash signature signedAt organ
   }

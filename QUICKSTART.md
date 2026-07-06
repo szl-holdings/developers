@@ -82,8 +82,8 @@ build a two-link Khipu chain locally.
 
 ## 5. See the Λ-gate make a decision (live, inside a11oy)
 
-The **policy / immune** function (roadmap role: Policy, internal codename *sentra* retired)
-ships **inside a11oy** today as the Λ-gate. Score an action and watch the gate decide:
+The **policy / immune** function (roadmap role: Policy) ships **inside a11oy** today as the
+Λ-gate. Score an action and watch the gate decide:
 
 ```bash
 curl -s -X POST https://szlholdings-a11oy.hf.space/api/a11oy/v1/mcp/call \
@@ -92,8 +92,8 @@ curl -s -X POST https://szlholdings-a11oy.hf.space/api/a11oy/v1/mcp/call \
 # => a gated decision with a Λ score and a signed/honest-unsigned receipt
 ```
 
-> The standalone Policy filter Space (`szlholdings-sentra.hf.space`) is **not deployed**
-> (HTTP 404) — it is a roadmap role. The live, enforcing decision today is a11oy's Λ-gate
+> The standalone Policy filter Space is **not deployed** (HTTP 404) — it is a roadmap role.
+> The live, enforcing decision today is a11oy's Λ-gate
 > (`a11oy_gate` tool / `/api/a11oy/v1/mcp/call`). See [API_REFERENCE.md](./API_REFERENCE.md)
 > for the canonical live routes.
 
