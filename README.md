@@ -27,6 +27,15 @@ the roadmap**; L3 / FedRAMP / Iron Bank / CMMC are **not claimed**.
 Both endpoints return Doctrine v11 from `/healthz`: 749 declarations / 14 axioms / 163 sorries,
 locked at `c7c0ba17`. **Λ = Conjecture 1, NOT a theorem.** Service images are SLSA Build L1 honest (cosign keyless-signed, Rekor-anchored); L2 verified-provenance on the roadmap (L3 not claimed).
 
+### ◇ Featured: the Holographic Estate
+
+See the frontier tier rendered as one live 3D holographic lattice — ~50 governed surfaces
+(frontier organs, energy, counter-UAS, governance, PINN, anatomy), each lit by a live a11oy
+endpoint. Vendored WebGL2 with optional WebGPU; **0 runtime CDN**. Every value carries its
+honesty label. Mobile-friendly.
+
+**[Open the Holographic Estate →](https://szlholdings-a11oy.hf.space/holographic)**
+
 ## Docs
 
 | File | Purpose |
