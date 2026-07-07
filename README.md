@@ -1,5 +1,10 @@
 # developers
 
+> ⚠️ **DEPRECATED — migrated to [`szl-holdings/docs-site`](https://github.com/szl-holdings/docs-site/tree/main/docs/developers) (published at `docs.szlholdings.com`).**
+> These pages now live under `docs/developers/` in the unified docs site. The
+> **[Holographic Estate](https://szlholdings-a11oy.hf.space/holographic)** link is preserved there.
+> This repo is **deprecated but NOT archived** — archival is a later founder step. See [`DEPRECATED.md`](./DEPRECATED.md).
+
 **SZL Holdings developer hub** · Doctrine v11 LOCKED (749 / 14 / 163) · Apache-2.0
 
 [![Doctrine v11](https://img.shields.io/badge/Doctrine-v11_LOCKED-3b82f6?style=flat-square)](https://github.com/szl-holdings/.github/tree/main/doctrine) [![SLSA](https://img.shields.io/badge/SLSA-Build_L1_honest_%C2%B7_L2_roadmap-22c55e?style=flat-square)](https://slsa.dev/spec/v1.0/levels) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
